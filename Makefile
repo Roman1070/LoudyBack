@@ -2,6 +2,8 @@ include .env
 
 gen_auth:
 	protoc -I proto proto/auth.proto --go_out=./gen/go/auth/ --go_opt=paths=source_relative --go-grpc_out=./gen/go/auth/ --go-grpc_opt=paths=source_relative
+gen_content:
+	protoc -I proto proto/content.proto --go_out=./gen/go/content/ --go_opt=paths=source_relative --go-grpc_out=./gen/go/content/ --go-grpc_opt=paths=source_relative
 auth:
 	go run cmd/auth/main.go
 
