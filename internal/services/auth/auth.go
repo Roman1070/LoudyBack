@@ -9,12 +9,13 @@ import (
 	"loudy-back/internal/lib/jwt"
 	"loudy-back/internal/lib/logger/sl"
 	storage "loudy-back/internal/storage"
+	"loudy-back/utils"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-type Auth struct {
+type AuthService struct {
 	log          *slog.Logger
 	userSaver    UserSaver
 	userProvider UserProvider
@@ -37,8 +38,8 @@ var (
 )
 
 // New returns a new instance of the Auth service.
-func New(log *slog.Logger, userProvider UserProvider, userSaver UserSaver, tokenTTL time.Duration) *Auth {
-	return &Auth{
+func New(log *slog.Logger, userProvider UserProvider, userSaver UserSaver, tokenTTL time.Duration) *AuthService {
+	return &AuthService{
 		userSaver:    userSaver,
 		userProvider: userProvider,
 		log:          log,
@@ -46,7 +47,7 @@ func New(log *slog.Logger, userProvider UserProvider, userSaver UserSaver, token
 	}
 }
 
-func (a *Auth) Login(ctx context.Context, email string, password string) (string, error) {
+func (a *AuthService) Login(ctx context.Context, email string, password string) (string, error) {
 	user, err := a.userProvider.User(ctx, email)
 	if err != nil {
 		if errors.Is(err, storage.ErrAppNotFound) {
@@ -56,7 +57,7 @@ func (a *Auth) Login(ctx context.Context, email string, password string) (string
 		}
 
 		a.log.Error("failed to get user", sl.Err(err))
-		return "", fmt.Errorf("servic Login error: " + ErrInvalidCredentials.Error())
+		return "", fmt.Errorf("service Login error: " + ErrInvalidCredentials.Error())
 	}
 
 	if err := bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(password)); err != nil {
@@ -74,22 +75,26 @@ func (a *Auth) Login(ctx context.Context, email string, password string) (string
 	return token, nil
 }
 
-func (a *Auth) RegisterNewUser(ctx context.Context, email string, password string) (int64, error) {
+func (a *AuthService) RegisterNewUser(ctx context.Context, email string, password string) (int64, error) {
 	slog.Info("service started to RegisterNewUser")
-	passHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+	salt, err := utils.GenerateSalt()
 	if err != nil {
-		slog.Error("Failed to generate password hash", sl.Err(err))
-		return -1, fmt.Errorf("servic RegisterNewUser error: " + err.Error())
+		a.log.Error("Failed to generate salt", sl.Err(err))
+		return -1, fmt.Errorf("service RegisterNewUser error: " + err.Error())
 	}
-	id, err := a.userSaver.SaveUser(ctx, email, passHash)
+
+	hashedPassword := utils.HashPassword(password, []byte(salt))
+
+	id, err := a.userSaver.SaveUser(ctx, email, hashedPassword)
 	if err != nil {
 		if errors.Is(err, storage.ErrUserExists) {
 			slog.Warn("User already exists")
 
-			return -1, fmt.Errorf("servic RegisterNewUser error: " + storage.ErrUserExists.Error())
+			return -1, fmt.Errorf("service RegisterNewUser error: " + storage.ErrUserExists.Error())
 		}
 		slog.Error("Failed to save user", sl.Err(err))
-		return -1, fmt.Errorf("servic Login error: " + err.Error())
+		return -1, fmt.Errorf("service RegisterNewUser error: " + err.Error())
 	}
 
 	return id, nil
