@@ -1,0 +1,31 @@
+env: local
+
+auth_service:
+  domain: "auth_go"
+  address: "0.0.0.0"
+  port: "44000"
+
+ideas_go:
+  domain: "ideas_go"
+  address: "0.0.0.0"
+  port: "44001"
+
+profiles_go:
+  domain: "profiles_go"
+  address: "0.0.0.0"
+  port: "44002"
+
+boards_go:
+  domain: "boards_go"
+  address: "0.0.0.0"
+  port: "44003"
+
+comments_go:
+  domain: "comments_go"
+  address: "0.0.0.0"
+  port: "44004"
+
+chats_go:
+  domain: "chats_go"
+  address: "0.0.0.0"
+  port: "44005"

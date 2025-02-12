@@ -1,0 +1,42 @@
+services:
+  auth_go:
+    build:
+      context: .
+      dockerfile: ./cmd/auth/Dockerfile
+    ports:
+      - "44000:44000"
+    image: auth-go-image
+    container_name: auth_go
+    restart: unless-stopped
+    networks:
+      - app-network
+    volumes:
+      - ./files:/app/files
+    depends_on:
+      - pg_db
+
+  pg_db:
+    image: postgres:16.4
+    ports:
+      - "54320:5432"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pg_data:/var/lib/postgresql/data/
+    container_name: pg_db
+    restart: unless-stopped
+    networks:
+      - app-network
+
+volumes:
+  pg_data:
+  go_back:
+
+networks:
+  app-network:
+    driver: bridge
