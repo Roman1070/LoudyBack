@@ -14,11 +14,15 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
+type key int
+
+const (
+	testContextRequestIDKey key = iota
+)
+
 var (
 	testContextRequestIDValue = uuid.New()
 )
-
-const testContextRequestIDKey = "request-id"
 
 func TestAuthService_Register(t *testing.T) {
 	type want struct {
