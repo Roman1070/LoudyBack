@@ -25,10 +25,12 @@ type Client struct {
 	Insecure     string        `yaml:"incesure"`
 }
 type ClientsConfig struct {
-	Auth Client `yaml:"auth"`
+	Auth    Client `yaml:"auth"`
+	Content Client `yaml:"content"`
 }
 type GRPCConfig struct {
-	Auth MicroserviceGRPCConfig `yaml:"auth"`
+	Auth    MicroserviceGRPCConfig `yaml:"auth"`
+	Content MicroserviceGRPCConfig `yaml:"content"`
 }
 type MicroserviceGRPCConfig struct {
 	Port    int           `yaml:"port"`

@@ -5,8 +5,15 @@ grpc:
   auth:
     port: 44000
     timeout: 10h
+  content:
+    port: 44001
+    timeout: 10h
 clients:
   auth:
+    timeout: "4s"
+    retriesCount: 5
+    insecure: true
+  content:
     timeout: "4s"
     retriesCount: 5
     insecure: true

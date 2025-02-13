@@ -6,6 +6,8 @@ import (
 	"log/slog"
 	models "loudy-back/internal/domain/models/content"
 	"time"
+
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func (s *Storage) Artist(ctx context.Context, name string) (models.Artist, error) {
@@ -92,4 +94,16 @@ func (s *Storage) GetArtistsAlbumsLight(ctx context.Context, ids []any) ([]model
 		albums = append(albums, album)
 	}
 	return albums, nil
+}
+
+func (s *Storage) CreateArtist(ctx context.Context, name, cover, bio string) (uint32, error) {
+	return 0, nil
+}
+
+func (s *Storage) CreateAlbum(ctx context.Context, name, cover string, tracks_ids []uint32, releaseDate time.Time) (uint32, error) {
+	return 0, nil
+}
+
+func (s *Storage) CreateTrack(ctx context.Context, name, file string, albumId uint32) (*emptypb.Empty, error) {
+	return nil, nil
 }

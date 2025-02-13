@@ -1,6 +1,7 @@
 package content
 
 import (
+	"context"
 	"log/slog"
 	"time"
 
@@ -10,19 +11,17 @@ import (
 type ContentService struct {
 	log            *slog.Logger
 	contentCreator ContentCreator
-	tokenTTL       time.Duration
 }
 
 type ContentCreator interface {
-	CreateArtist(name, cover, bio string) (uint32, error)
-	CreateTrack(name, file string, albumId uint32) (*emptypb.Empty, error)
-	CreateAlbum(artistsIds, tracksIds []uint32, name, cover string, releaseDate time.Time) (uint32, error)
+	CreateArtist(ctx context.Context, name, cover, bio string) (uint32, error)
+	CreateTrack(ctx context.Context, name, file string, albumId uint32) (*emptypb.Empty, error)
+	CreateAlbum(ctx context.Context, name, cover string, tracksIds []uint32, releaseDate time.Time) (uint32, error)
 }
 
-func New(log *slog.Logger, contentCreator ContentCreator, tokenTTL time.Duration) *ContentService {
+func New(log *slog.Logger, contentCreator ContentCreator) *ContentService {
 	return &ContentService{
 		contentCreator: contentCreator,
 		log:            log,
-		tokenTTL:       tokenTTL,
 	}
 }
