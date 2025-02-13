@@ -96,6 +96,12 @@ func (s *Storage) GetArtistsAlbumsLight(ctx context.Context, ids []any) ([]model
 	return albums, nil
 }
 
+func (s *Storage) Album(ctx context.Context, id uint32) (models.Album, error) {
+	return models.Album{}, nil
+}
+func (s *Storage) SearchContent(ctx context.Context, input string) ([]models.ArtistLight, []models.AlbumLight, []models.TrackLight, error) {
+	return nil, nil, nil, nil
+}
 func (s *Storage) CreateArtist(ctx context.Context, name, cover, bio string) (uint32, error) {
 	return 0, nil
 }

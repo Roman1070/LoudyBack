@@ -1,12 +1,20 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	contentv1 "loudy-back/gen/go/content"
 	models "loudy-back/internal/domain/models/content"
 	"loudy-back/utils"
 	"net/http"
+	"time"
+
+	grpcretry "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/retry"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type ContentClient struct {
@@ -15,16 +23,37 @@ type ContentClient struct {
 }
 
 type ContentProvider interface {
-	Artist(name string) (models.Artist, error)
-	Album(id uint32) (models.Album, error)
-	SearchContent(input string) ([]models.ArtistLight, []models.AlbumLight, []models.TrackLight, error)
+	Artist(ctx context.Context, name string) (models.Artist, error)
+	Album(ctx context.Context, id uint32) (models.Album, error)
+	SearchContent(ctx context.Context, input string) ([]models.ArtistLight, []models.AlbumLight, []models.TrackLight, error)
+}
+
+func NewContentClient(addr string, timeout time.Duration, retriesCount int, contentProvider ContentProvider) (*ContentClient, error) {
+	retryOptions := []grpcretry.CallOption{
+		grpcretry.WithCodes(codes.NotFound, codes.Aborted, codes.DeadlineExceeded),
+		grpcretry.WithMax(uint(retriesCount)),
+		grpcretry.WithPerRetryTimeout(timeout),
+	}
+
+	cc, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithChainUnaryInterceptor(
+		grpcretry.UnaryClientInterceptor(retryOptions...),
+	))
+	if err != nil {
+		slog.Error("client [NewContentClient] error: " + err.Error())
+		return nil, fmt.Errorf("client [NewContentClient] error: " + err.Error())
+	}
+
+	return &ContentClient{
+		contentProvider: contentProvider,
+		contentCreator:  contentv1.NewContentClient(cc),
+	}, nil
 }
 
 func (c *ContentClient) Artist(w http.ResponseWriter, r *http.Request) {
 	slog.Info("client start [Artist]")
 	name := r.URL.Query().Get("name")
 
-	artist, err := c.contentProvider.Artist(name)
+	artist, err := c.contentProvider.Artist(r.Context(), name)
 	if err != nil {
 		slog.Error("[Artist] client error: " + err.Error())
 		utils.WriteError(w, "Internal error")
