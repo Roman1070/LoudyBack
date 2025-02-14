@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS artists(
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
-    bio TEXT,
-    cover TEXT,
+    bio TEXT NOT NULL DEFAULT '',
+    cover TEXT NOT NULL DEFAULT '',
     likes_count INTEGER NOT NULL DEFAULT 0
 );
 
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS albums(
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     tracks_ids INTEGER[] NOT NULL,
-    cover TEXT,
+    cover TEXT  NOT NULL DEFAULT '',
     release_date date
 );
 

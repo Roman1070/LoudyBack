@@ -2,7 +2,7 @@ FROM golang:1.23.1-alpine3.20 AS build
 
 WORKDIR /var/backend
 
-COPY internal/clients/. clients/
+COPY internal/delivery/. delivery/
 COPY . .
 
 RUN go mod tidy

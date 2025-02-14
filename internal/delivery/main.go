@@ -1,11 +1,22 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"loudy-back/internal/config"
+	"loudy-back/internal/middlewares"
 	"loudy-back/internal/storage/postgre"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
+)
+
+var (
+	AppPortEnv      = "APP_PORT"
+	AppSecretEnv    = "APP_SECRET"
+	TokenCookieName = "token"
+	EmptyValue      = int64(-1)
 )
 
 func main() {
@@ -24,5 +35,10 @@ func main() {
 	router.HandleFunc("/api/register", authClient.Regsiter).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc("/api/login", authClient.Login).Methods(http.MethodPost, http.MethodOptions)
 
-	router.HandleFunc("/api/artist", contentClient.Artist).Methods(http.MethodPost, http.MethodOptions)
+	router.HandleFunc("/api/artist", contentClient.Artist).Methods(http.MethodGet, http.MethodOptions)
+
+	handler := middlewares.CorsMiddleware(router)
+	fmt.Println("Server is listening...")
+
+	log.Fatal(http.ListenAndServe(os.Getenv(AppPortEnv), handler))
 }
