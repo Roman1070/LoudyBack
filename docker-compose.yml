@@ -61,6 +61,20 @@ services:
     networks:
       - app-network
 
+  mongo_db:
+    image: mongo
+    container_name: mongo-db
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+    ports:
+      - '27017:27017'
+    networks:
+      - app-network
+
 volumes:
   pg_data:
   go_back:

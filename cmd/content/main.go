@@ -14,7 +14,10 @@ func main() {
 
 	log := common.SetupLogger(cfg.Env)
 
-	contentApp := appContent.New(log, cfg.GRPC.Content.Port)
+	contentApp, err := appContent.New(log, cfg.GRPC.Content.Port)
+	if err != nil {
+		panic(err)
+	}
 
 	go func() {
 		contentApp.GRPCServer.MustRun()

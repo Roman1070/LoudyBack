@@ -1,11 +1,13 @@
 package app
 
 import (
+	"fmt"
 	"log/slog"
+	mongo_db "loudy-back/configs/mongo"
 	common "loudy-back/internal/app"
 	grpcApp "loudy-back/internal/app/grpc/content"
 	"loudy-back/internal/services/content"
-	"loudy-back/internal/storage/postgre"
+	repositoryContent "loudy-back/internal/storage/content"
 )
 
 type App struct {
@@ -15,17 +17,20 @@ type App struct {
 func New(
 	log *slog.Logger,
 	grpcPort int,
-) *App {
-	storage, err := postgre.New()
+) (*App, error) {
+
+	mongoDb, err := mongo_db.Connect()
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("[ ERROR ] не инициализируется монго %v", err)
 	}
 
-	contentService := content.New(log, storage)
+	repo := repositoryContent.NewStorage(mongoDb, "artists")
+
+	contentService := content.New(log, repo)
 
 	grpcApp := grpcApp.New(log, contentService, grpcPort)
 
 	return &App{
 		GRPCServer: grpcApp,
-	}
+	}, nil
 }

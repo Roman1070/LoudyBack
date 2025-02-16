@@ -12,6 +12,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.2
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.9.0
+	go.mongodb.org/mongo-driver v1.17.2
 	go.uber.org/mock v0.5.0
 	golang.org/x/crypto v0.31.0
 	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac
@@ -20,9 +21,19 @@ require (
 )
 
 require (
+	github.com/golang/snappy v0.0.4 // indirect
+	github.com/klauspost/compress v1.16.7 // indirect
+	github.com/montanaflynn/stats v0.7.1 // indirect
+	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
+	github.com/xdg-go/scram v1.1.2 // indirect
+	github.com/xdg-go/stringprep v1.0.4 // indirect
+	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
+)
+
+require (
 	github.com/BurntSushi/toml v1.4.1-0.20240526193622-a339e1f7089c // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/gorilla/mux v1.8.1 
+	github.com/gorilla/mux v1.8.1
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect

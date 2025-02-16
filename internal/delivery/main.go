@@ -22,13 +22,13 @@ var (
 func main() {
 	cfg := config.MustLoad()
 
-	storage, err := postgre.New()
+	postgreStorage, err := postgre.New()
 	if err != nil {
 		panic("can't create db connection: " + err.Error())
 	}
 
 	authClient, _ := NewAuthClient(cfg.Clients.Auth.Address, cfg.Clients.Auth.Timeout, cfg.Clients.Auth.RetriesCount)
-	contentClient, _ := NewContentClient(cfg.Clients.Content.Address, cfg.Clients.Content.Timeout, cfg.Clients.Content.RetriesCount, storage)
+	contentClient, _ := NewContentClient(cfg.Clients.Content.Address, cfg.Clients.Content.Timeout, cfg.Clients.Content.RetriesCount, postgreStorage)
 
 	router := mux.NewRouter()
 

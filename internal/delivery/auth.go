@@ -69,7 +69,7 @@ func (c *AuthClient) Regsiter(w http.ResponseWriter, r *http.Request) {
 	var req registerRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		slog.Error("client Regsiter error: " + err.Error())
+		slog.Error("[Regsiter] client error: " + err.Error())
 		utils.WriteError(w, "Internal error")
 		return
 	}
@@ -86,14 +86,14 @@ func (c *AuthClient) Regsiter(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		slog.Error("client Regsiter error: " + err.Error())
+		slog.Error("[Regsiter] client error: " + err.Error())
 		utils.WriteError(w, "Internal error")
 		return
 	}
 
 	result, err := json.Marshal(registerResponse)
 	if err != nil {
-		slog.Error("client Regsiter error: " + err.Error())
+		slog.Error("[Regsiter] client error: " + err.Error())
 		utils.WriteError(w, "Internal error")
 		return
 	}
@@ -112,8 +112,8 @@ func NewAuthClient(addr string, timeout time.Duration, retriesCount int) (*AuthC
 		grpcretry.UnaryClientInterceptor(retryOptions...),
 	))
 	if err != nil {
-		slog.Error("client Regsiter error: " + err.Error())
-		return nil, fmt.Errorf("client Regsiter error: " + err.Error())
+		slog.Error("[Regsiter] client error: " + err.Error())
+		return nil, fmt.Errorf("%s", "[Regsiter] client error: "+err.Error())
 	}
 
 	return &AuthClient{

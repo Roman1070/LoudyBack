@@ -39,8 +39,8 @@ func NewContentClient(addr string, timeout time.Duration, retriesCount int, cont
 		grpcretry.UnaryClientInterceptor(retryOptions...),
 	))
 	if err != nil {
-		slog.Error("client [NewContentClient] error: " + err.Error())
-		return nil, fmt.Errorf("client [NewContentClient] error: " + err.Error())
+		slog.Error("[NewContentClient] client error: " + err.Error())
+		return nil, fmt.Errorf("%s", "[NewContentClient] client  error: "+err.Error())
 	}
 
 	return &ContentClient{
