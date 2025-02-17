@@ -7,6 +7,7 @@ import (
 	albumsv1 "loudy-back/gen/go/albums"
 	models "loudy-back/internal/domain/models/albums"
 	"loudy-back/utils"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc"
@@ -15,8 +16,8 @@ import (
 )
 
 type Albums interface {
-	Album(ctx context.Context, id string) (models.Album, error)
-	CreateAlbum(ctx context.Context, name, cover string, artists_ids []primitive.ObjectID) (*emptypb.Empty, error)
+	Album(ctx context.Context, id primitive.ObjectID) (models.Album, error)
+	CreateAlbum(ctx context.Context, name, cover string, releaseDate time.Time, artists_ids []primitive.ObjectID) (*emptypb.Empty, error)
 }
 type serverAPI struct {
 	albums Albums
@@ -31,11 +32,18 @@ func Register(gRPC *grpc.Server, albums Albums, log *slog.Logger) {
 func (s *serverAPI) Album(ctx context.Context, req *albumsv1.AlbumRequest) (*albumsv1.AlbumResponse, error) {
 	s.log.Info("[Album] grpc started")
 
-	album, err := s.albums.Album(ctx, req.Id)
+	id, err := primitive.ObjectIDFromHex(req.Id)
 	if err != nil {
 		s.log.Error("[Album] grpc error: " + err.Error())
 		return nil, errors.New("[Album] grpc error: " + err.Error())
 	}
+
+	album, err := s.albums.Album(ctx, id)
+	if err != nil {
+		s.log.Error("[Album] grpc error: " + err.Error())
+		return nil, errors.New("[Album] grpc error: " + err.Error())
+	}
+
 	artists := make([]*albumsv1.ArtistLight, len(album.Artists))
 	for i, artist := range album.Artists {
 		artists[i] = &albumsv1.ArtistLight{
@@ -72,7 +80,7 @@ func (s *serverAPI) CreateAlbum(ctx context.Context, req *albumsv1.CreateAlbumRe
 		return nil, errors.New("[CreateAlbum] grpc error: " + err.Error())
 	}
 
-	_, err = s.albums.CreateAlbum(ctx, req.Name, req.Cover, ids)
+	_, err = s.albums.CreateAlbum(ctx, req.Name, req.Cover, req.ReleaseDate.AsTime(), ids)
 	if err != nil {
 		s.log.Error("[CreateAlbum] grpc error: " + err.Error())
 		return nil, errors.New("[CreateAlbum] grpc error: " + err.Error())

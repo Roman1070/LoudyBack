@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	models "loudy-back/internal/domain/models/artists"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func (s *ArtistsStorage) CreateArtist(ctx context.Context, name, cover, bio string) (*emptypb.Empty, error) {
-	newArtist := models.Artist{
+	newArtist := dtoArtist{
 		Name:       name,
 		Cover:      cover,
 		Bio:        bio,

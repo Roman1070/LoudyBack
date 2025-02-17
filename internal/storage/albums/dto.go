@@ -10,7 +10,7 @@ import (
 )
 
 type dtoAlbum struct {
-	ID          primitive.ObjectID   `bson:"_id"`
+	ID          primitive.ObjectID   `bson:"omitempty,_id"`
 	Name        string               `bson:"name"`
 	Cover       string               `bson:"cover"`
 	ReleaseDate time.Time            `bson:"release_date"`
