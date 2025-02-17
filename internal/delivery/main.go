@@ -3,9 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
+	mongo_db "loudy-back/configs/mongo"
 	"loudy-back/internal/config"
 	"loudy-back/internal/middlewares"
-	"loudy-back/internal/storage/postgre"
+	repositoryContent "loudy-back/internal/storage/content"
 	"net/http"
 	"os"
 
@@ -22,13 +23,20 @@ var (
 func main() {
 	cfg := config.MustLoad()
 
-	postgreStorage, err := postgre.New()
+	mongoDb, err := mongo_db.Connect()
 	if err != nil {
-		panic("can't create db connection: " + err.Error())
+		return
 	}
 
+	contentStorage := repositoryContent.NewStorage(mongoDb, "artists")
+
+	// postgreStorage, err := postgre.New()
+	// if err != nil {
+	// 	panic("can't create db connection: " + err.Error())
+	// }
+
 	authClient, _ := NewAuthClient(cfg.Clients.Auth.Address, cfg.Clients.Auth.Timeout, cfg.Clients.Auth.RetriesCount)
-	contentClient, _ := NewContentClient(cfg.Clients.Content.Address, cfg.Clients.Content.Timeout, cfg.Clients.Content.RetriesCount, postgreStorage)
+	contentClient, _ := NewContentClient(cfg.Clients.Content.Address, cfg.Clients.Content.Timeout, cfg.Clients.Content.RetriesCount, contentStorage)
 
 	router := mux.NewRouter()
 

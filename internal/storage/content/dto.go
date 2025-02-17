@@ -10,7 +10,7 @@ type dtoArtist struct {
 	Name       string     `bson:"name"`
 	Cover      string     `bson:"cover"`
 	Bio        string     `bson:"bio"`
-	LikesCount uint16     `bson:"likes_count"`
+	LikesCount uint32     `bson:"likes_count"`
 	Albums     []dtoAlbum `bson:"albums"`
 }
 
