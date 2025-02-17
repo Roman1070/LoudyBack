@@ -6,7 +6,7 @@ COPY internal/delivery/. delivery/
 COPY . .
 
 RUN go mod tidy
-RUN go build -o main delivery/main.go delivery/auth.go delivery/content.go
+RUN go build -o main delivery/main.go delivery/auth.go delivery/artists.go
 
 FROM alpine:edge AS prod
 

@@ -28,7 +28,7 @@ var (
 	testContextRequestIDValue = uuid.New()
 )
 
-func TestContentService_CreateArtist(t *testing.T) {
+func TestArtistservice_CreateArtist(t *testing.T) {
 	type want struct {
 		err error
 	}
@@ -49,16 +49,16 @@ func TestContentService_CreateArtist(t *testing.T) {
 			cover:      "",
 			bio:        "",
 			setupFunc: func(ctrl *gomock.Controller) *ArtistsService {
-				contentCreator := mock_artists.NewMockArtistsCreator(ctrl)
-				contentProvider := mock_artists.NewMockArtistsProvider(ctrl)
+				artistsCreator := mock_artists.NewMockArtistsCreator(ctrl)
+				artistsProvider := mock_artists.NewMockArtistsProvider(ctrl)
 
-				contentProvider.EXPECT().Artist(gomock.Any(), "artist name").Return(models.Artist{}, storage.ErrArtistNotFound)
+				artistsProvider.EXPECT().Artist(gomock.Any(), "artist name").Return(models.Artist{}, storage.ErrArtistNotFound)
 
-				contentCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").Return(&emptypb.Empty{}, nil)
+				artistsCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").Return(&emptypb.Empty{}, nil)
 
 				return &ArtistsService{
-					artistsCreator:  contentCreator,
-					artistsProvider: contentProvider,
+					artistsCreator:  artistsCreator,
+					artistsProvider: artistsProvider,
 					log:             slog.New(slog.NewTextHandler(io.Discard, nil)),
 				}
 			},
@@ -72,8 +72,8 @@ func TestContentService_CreateArtist(t *testing.T) {
 			cover:      "",
 			bio:        "",
 			setupFunc: func(ctrl *gomock.Controller) *ArtistsService {
-				contentCreator := mock_artists.NewMockArtistsCreator(ctrl)
-				contentProvider := mock_artists.NewMockArtistsProvider(ctrl)
+				artistsCreator := mock_artists.NewMockArtistsCreator(ctrl)
+				artistsProvider := mock_artists.NewMockArtistsProvider(ctrl)
 
 				artist := models.Artist{
 					Name:       "artist name",
@@ -82,14 +82,14 @@ func TestContentService_CreateArtist(t *testing.T) {
 					LikesCount: 0,
 				}
 
-				contentProvider.EXPECT().Artist(gomock.Any(), "artist name").Return(artist, nil)
+				artistsProvider.EXPECT().Artist(gomock.Any(), "artist name").Return(artist, nil)
 
-				contentCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").
+				artistsCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").
 					Return(&emptypb.Empty{}, storage.ErrArtistAlreadyExists).AnyTimes()
 
 				return &ArtistsService{
-					artistsCreator:  contentCreator,
-					artistsProvider: contentProvider,
+					artistsCreator:  artistsCreator,
+					artistsProvider: artistsProvider,
 					log:             slog.New(slog.NewTextHandler(io.Discard, nil)),
 				}
 			},
@@ -103,17 +103,17 @@ func TestContentService_CreateArtist(t *testing.T) {
 			cover:      "",
 			bio:        "",
 			setupFunc: func(ctrl *gomock.Controller) *ArtistsService {
-				contentCreator := mock_artists.NewMockArtistsCreator(ctrl)
-				contentProvider := mock_artists.NewMockArtistsProvider(ctrl)
+				artistsCreator := mock_artists.NewMockArtistsCreator(ctrl)
+				artistsProvider := mock_artists.NewMockArtistsProvider(ctrl)
 
-				contentProvider.EXPECT().Artist(gomock.Any(), "artist name").Return(models.Artist{}, storage.ErrArtistNotFound)
+				artistsProvider.EXPECT().Artist(gomock.Any(), "artist name").Return(models.Artist{}, storage.ErrArtistNotFound)
 
-				contentCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").
+				artistsCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").
 					Return(&emptypb.Empty{}, errors.New("some error"))
 
 				return &ArtistsService{
-					artistsCreator:  contentCreator,
-					artistsProvider: contentProvider,
+					artistsCreator:  artistsCreator,
+					artistsProvider: artistsProvider,
 					log:             slog.New(slog.NewTextHandler(io.Discard, nil)),
 				}
 			},

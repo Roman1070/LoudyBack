@@ -6,7 +6,7 @@ import (
 	mongo_db "loudy-back/configs/mongo"
 	common "loudy-back/internal/app"
 	grpcApp "loudy-back/internal/app/grpc/artists"
-	content "loudy-back/internal/services/artists"
+	"loudy-back/internal/services/artists"
 	repositoryArtists "loudy-back/internal/storage/artists"
 )
 
@@ -26,7 +26,7 @@ func New(
 
 	repo := repositoryArtists.NewStorage(mongoDb, "artists", log)
 
-	artistsService := content.New(log, repo, repo)
+	artistsService := artists.New(log, repo, repo)
 
 	grpcApp := grpcApp.New(log, artistsService, grpcPort)
 
