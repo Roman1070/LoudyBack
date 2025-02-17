@@ -5,6 +5,7 @@ import (
 	common "loudy-back/cmd"
 	mongo_db "loudy-back/configs/mongo"
 	"loudy-back/internal/config"
+	"loudy-back/internal/delivery/artists"
 	"loudy-back/internal/middlewares"
 	repositoryArtists "loudy-back/internal/storage/artists"
 	"net/http"
@@ -37,7 +38,7 @@ func main() {
 	// }
 
 	authClient, _ := NewAuthClient(common.GrpcAuthAddress(cfg), cfg.Clients.Auth.Timeout, cfg.Clients.Auth.RetriesCount)
-	artistsClient, _ := NewArtistsClient(common.GrpcArtistsddress(cfg), cfg.Clients.Artists.Timeout, cfg.Clients.Artists.RetriesCount, artistsStorage)
+	artistsClient, _ := artists.NewArtistsClient(common.GrpcArtistsddress(cfg), cfg.Clients.Artists.Timeout, cfg.Clients.Artists.RetriesCount, artistsStorage)
 
 	router := mux.NewRouter()
 

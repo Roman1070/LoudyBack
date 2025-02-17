@@ -1,4 +1,4 @@
-package main
+package artists
 
 import (
 	"context"
@@ -27,8 +27,8 @@ type ArtistsProvider interface {
 }
 
 type ArtistsClient struct {
-	artistsProvider artists.Artists
-	artistsClient   artistsv1.ArtistsClient
+	artistsProvider   artists.Artists
+	ArtistsGRPCClient artistsv1.ArtistsClient
 }
 
 func NewArtistsClient(addr string, timeout time.Duration, retriesCount int, artists artists.Artists) (*ArtistsClient, error) {
@@ -47,8 +47,8 @@ func NewArtistsClient(addr string, timeout time.Duration, retriesCount int, arti
 	}
 
 	return &ArtistsClient{
-		artistsProvider: artists,
-		artistsClient:   artistsv1.NewArtistsClient(cc),
+		artistsProvider:   artists,
+		ArtistsGRPCClient: artistsv1.NewArtistsClient(cc),
 	}, nil
 }
 
@@ -86,7 +86,7 @@ func (c *ArtistsClient) CreateArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = c.artistsClient.CreateArtist(r.Context(), request.ToGRPC())
+	_, err = c.ArtistsGRPCClient.CreateArtist(r.Context(), request.ToGRPC())
 	if err != nil {
 		slog.Error("[CreateArtist] client error: " + err.Error())
 		if strings.Contains(err.Error(), storage.ErrArtistAlreadyExists.Error()) {

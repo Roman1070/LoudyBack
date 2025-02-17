@@ -8,12 +8,19 @@ grpc:
   artists:
     port: 44001
     timeout: 10h
+  albums:
+    port: 44002
+    timeout: 10h
 clients:
   auth:
     timeout: "4s"
     retriesCount: 5
     insecure: true
   artists:
+    timeout: "4s"
+    retriesCount: 5
+    insecure: true
+  albums:
     timeout: "4s"
     retriesCount: 5
     insecure: true
