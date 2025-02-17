@@ -2,31 +2,31 @@ package main
 
 import (
 	common "loudy-back/cmd"
-	mongo_db "loudy-back/configs/mongo"
+	artistsv1 "loudy-back/gen/go/artists"
 	appAlbums "loudy-back/internal/app/albums"
 	"loudy-back/internal/config"
-	"loudy-back/internal/delivery/artists"
-	repositoryArtists "loudy-back/internal/storage/artists"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
 	cfg := config.MustLoad()
 
 	log := common.SetupLogger(cfg.Env)
-	mongoDb, err := mongo_db.Connect()
+	cc, err := grpc.NewClient(common.GrpcArtistsAddress(cfg),
+		grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithChainUnaryInterceptor())
+
 	if err != nil {
 		panic(err)
 	}
 
-	artistsStorage := repositoryArtists.NewStorage(mongoDb, "artists", log)
+	artistsClient := artistsv1.NewArtistsClient(cc)
 
-	artistsClient, _ := artists.NewArtistsClient(common.GrpcArtistsAddress(cfg),
-		cfg.Clients.Artists.Timeout, cfg.Clients.Artists.RetriesCount, artistsStorage)
-
-	albumsApp, err := appAlbums.New(log, cfg.GRPC.Albums.Port, artistsClient.ArtistsGRPCClient)
+	albumsApp, err := appAlbums.New(log, cfg.GRPC.Albums.Port, artistsClient)
 	if err != nil {
 		panic(err)
 	}
