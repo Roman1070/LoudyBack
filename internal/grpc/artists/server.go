@@ -39,7 +39,7 @@ func (s *serverAPI) Artist(ctx context.Context, req *artistsv1.ArtistRequest) (*
 	return artist.ToGRPC(), nil
 }
 func (s *serverAPI) Artists(ctx context.Context, req *artistsv1.ArtistsRequest) (*artistsv1.ArtistsResponse, error) {
-	s.log.Info("[CreateArtist] grpc started")
+	s.log.Info("[Artists] grpc started")
 
 	ids := make([]primitive.ObjectID, len(req.Ids))
 	for i, id := range req.Ids {
@@ -57,7 +57,7 @@ func (s *serverAPI) Artists(ctx context.Context, req *artistsv1.ArtistsRequest) 
 		s.log.Error("[Artist] grpc error: " + err.Error())
 		return nil, fmt.Errorf("%s", "[Artist] grpc error: "+err.Error())
 	}
-
+	s.log.Info("[Artists] grpc artists recieved, artists= " + fmt.Sprint(artists))
 	return models.ArtistsToGRPC(artists), nil
 }
 

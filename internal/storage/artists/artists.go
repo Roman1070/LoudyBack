@@ -20,6 +20,7 @@ func (c *ArtistsStorage) Artists(ctx context.Context, ids []primitive.ObjectID) 
 
 	cursor, err := c.collection.Find(ctx, query)
 	if err != nil {
+		c.log.Info("[Artists] cursor error: " + err.Error())
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, storage.ErrArtistNotFound
 		}
@@ -27,6 +28,7 @@ func (c *ArtistsStorage) Artists(ctx context.Context, ids []primitive.ObjectID) 
 		slog.Error("[Artists] storage error: " + err.Error())
 		return nil, fmt.Errorf("%s", "[Artists] storage error: "+err.Error())
 	}
+	c.log.Info("[Artists] cursor recieved")
 
 	var results []dtoArtist
 	err = cursor.All(ctx, &results)
@@ -34,6 +36,7 @@ func (c *ArtistsStorage) Artists(ctx context.Context, ids []primitive.ObjectID) 
 		slog.Error("[Artists] storage error: " + err.Error())
 		return nil, fmt.Errorf("%s", "[Artists] storage error: "+err.Error())
 	}
+	c.log.Info("[Artists] results written, results= " + fmt.Sprint(results))
 
 	return toCommonModels(results), nil
 }

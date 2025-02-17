@@ -16,6 +16,12 @@ func main() {
 
 	authApp := appAuth.New(log, cfg.GRPC.Auth.Port, cfg.TokenTTL)
 
+	defer func() {
+		if r := recover(); r != nil {
+			log.Info("Recovered from panic:", r)
+		}
+	}()
+
 	go func() {
 		authApp.GRPCServer.MustRun()
 	}()

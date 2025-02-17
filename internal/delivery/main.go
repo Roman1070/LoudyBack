@@ -4,8 +4,6 @@ import (
 	"fmt"
 	common "loudy-back/cmd"
 	"loudy-back/internal/config"
-	"loudy-back/internal/delivery/albums"
-	"loudy-back/internal/delivery/artists"
 	"loudy-back/internal/middlewares"
 	"net/http"
 	"os"
@@ -35,8 +33,8 @@ func main() {
 	// }
 
 	authClient, _ := NewAuthClient(common.GrpcAuthAddress(cfg), cfg.Clients.Auth.Timeout, cfg.Clients.Auth.RetriesCount)
-	artistsClient, _ := artists.NewArtistsClient(common.GrpcArtistsAddress(cfg), cfg.Clients.Artists.Timeout, cfg.Clients.Artists.RetriesCount)
-	albumsClient, _ := albums.NewAlbumsClient(common.GrpcAlbumsAddress(cfg), cfg.Clients.Albums.Timeout, cfg.Clients.Albums.RetriesCount, log)
+	artistsClient, _ := NewArtistsClient(common.GrpcArtistsAddress(cfg), cfg.Clients.Artists.Timeout, cfg.Clients.Artists.RetriesCount)
+	albumsClient, _ := NewAlbumsClient(common.GrpcAlbumsAddress(cfg), cfg.Clients.Albums.Timeout, cfg.Clients.Albums.RetriesCount, log)
 
 	router := mux.NewRouter()
 

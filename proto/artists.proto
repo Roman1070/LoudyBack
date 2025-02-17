@@ -28,11 +28,12 @@ message ArtistResponse{
     ArtistData artist=1;
 }
 message ArtistData{
-    string name = 1;
-    string bio = 2;
-    string cover = 3;
-    uint32 likes_count=4;
-    repeated string albums_ids=5;
+    string id = 1;
+    string name = 2;
+    string bio = 3;
+    string cover = 4;
+    uint32 likes_count=5;
+    repeated string albums_ids=6;
 }
 
 message CreateArtistRequest{

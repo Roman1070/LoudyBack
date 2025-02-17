@@ -19,14 +19,11 @@ type Artist struct {
 }
 
 func (artist *Artist) ToGRPC() *artistsv1.ArtistResponse {
-	ids := make([]string, len(artist.AlbumsIds))
-
-	for i, id := range artist.AlbumsIds {
-		ids[i] = id.Hex()
-	}
+	ids := utils.IdsToStringArray(artist.AlbumsIds)
 
 	return &artistsv1.ArtistResponse{
 		Artist: &artistsv1.ArtistData{
+			Id:         artist.ID.Hex(),
 			Name:       artist.Name,
 			Bio:        artist.Bio,
 			Cover:      artist.Cover,
@@ -47,7 +44,14 @@ func ModelsFromArtistData(artists []*artistsv1.ArtistData) ([]Artist, error) {
 			return nil, errors.New("[ModelsFromArtistData] error: " + err.Error())
 		}
 
+		id, err := primitive.ObjectIDFromHex(artist.Id)
+		if err != nil {
+			slog.Error("[ModelsFromArtistData] error: " + err.Error())
+			return nil, errors.New("[ModelsFromArtistData] error: " + err.Error())
+		}
+
 		result[i] = Artist{
+			ID:         id,
 			Name:       artist.Name,
 			Bio:        artist.Bio,
 			Cover:      artist.Cover,
@@ -61,13 +65,14 @@ func ModelsFromArtistData(artists []*artistsv1.ArtistData) ([]Artist, error) {
 func ArtistsToGRPC(artists []Artist) *artistsv1.ArtistsResponse {
 	result := make([]*artistsv1.ArtistData, len(artists))
 
-	ids := make([]string, len(artists))
 	for i, artist := range artists {
-		ids[i] = string(artist.AlbumsIds[i].Hex())
-	}
+		ids := make([]string, len(artist.AlbumsIds))
+		for j, id := range artist.AlbumsIds {
+			ids[j] = id.Hex()
+		}
 
-	for i, artist := range artists {
 		result[i] = &artistsv1.ArtistData{
+			Id:         artist.ID.Hex(),
 			Name:       artist.Name,
 			Bio:        artist.Bio,
 			Cover:      artist.Cover,
@@ -75,6 +80,7 @@ func ArtistsToGRPC(artists []Artist) *artistsv1.ArtistsResponse {
 			AlbumsIds:  ids,
 		}
 	}
+
 	return &artistsv1.ArtistsResponse{
 		Artists: result,
 	}

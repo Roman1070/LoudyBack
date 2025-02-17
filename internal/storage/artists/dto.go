@@ -7,7 +7,7 @@ import (
 )
 
 type dtoArtist struct {
-	ID         primitive.ObjectID   `bson:"omitempty,_id"`
+	ID         primitive.ObjectID   `bson:"_id"`
 	Name       string               `bson:"name"`
 	Cover      string               `bson:"cover"`
 	Bio        string               `bson:"bio"`
@@ -30,6 +30,7 @@ func toCommonModels(artists []dtoArtist) []models.Artist {
 
 	for i, artist := range artists {
 		result[i] = models.Artist{
+			ID:         artist.ID,
 			Name:       artist.Name,
 			Cover:      artist.Cover,
 			Bio:        artist.Bio,

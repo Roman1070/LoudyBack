@@ -19,6 +19,11 @@ func main() {
 		panic(err)
 	}
 
+	defer func() {
+		if r := recover(); r != nil {
+			log.Info("Recovered from panic:", r)
+		}
+	}()
 	go func() {
 		artistsApp.GRPCServer.MustRun()
 	}()

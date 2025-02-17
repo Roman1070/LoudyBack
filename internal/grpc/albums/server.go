@@ -3,6 +3,7 @@ package albums
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	albumsv1 "loudy-back/gen/go/albums"
 	models "loudy-back/internal/domain/models/albums"
@@ -43,6 +44,7 @@ func (s *serverAPI) Album(ctx context.Context, req *albumsv1.AlbumRequest) (*alb
 		s.log.Error("[Album] grpc error: " + err.Error())
 		return nil, errors.New("[Album] grpc error: " + err.Error())
 	}
+	s.log.Info("[Album] grpc recieved album: " + fmt.Sprint(album))
 
 	artists := make([]*albumsv1.ArtistLight, len(album.Artists))
 	for i, artist := range album.Artists {

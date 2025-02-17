@@ -6,7 +6,7 @@ COPY internal/delivery/. delivery/
 COPY . .
 
 RUN go mod tidy
-RUN go build -o main delivery/main.go delivery/auth.go delivery/artists.go
+RUN go build -o main delivery/main.go delivery/auth.go delivery/artists.go delivery/albums.go
 
 FROM alpine:edge AS prod
 
@@ -16,7 +16,7 @@ COPY --from=build /var/backend/main /app/main
 COPY --from=build /var/backend/.env /app/.env
 
 RUN mkdir -p /app/files
-COPY files /app/files
+COPY files /app/files   
 
 RUN mkdir -p /app/configs
 COPY configs app/configs
