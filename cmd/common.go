@@ -49,6 +49,10 @@ func GrpcAuthAddress(cfg *config.Config) string {
 	return fmt.Sprintf("auth-go:%v", cfg.GRPC.Auth.Port)
 }
 
-func GrpcArtistsddress(cfg *config.Config) string {
+func GrpcArtistsAddress(cfg *config.Config) string {
 	return fmt.Sprintf("artists-go:%v", cfg.GRPC.Artists.Port)
+}
+
+func GrpcAlbumsAddress(cfg *config.Config) string {
+	return fmt.Sprintf("albums-go:%v", cfg.GRPC.Albums.Port)
 }

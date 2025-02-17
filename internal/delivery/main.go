@@ -3,11 +3,10 @@ package main
 import (
 	"fmt"
 	common "loudy-back/cmd"
-	mongo_db "loudy-back/configs/mongo"
 	"loudy-back/internal/config"
+	"loudy-back/internal/delivery/albums"
 	"loudy-back/internal/delivery/artists"
 	"loudy-back/internal/middlewares"
-	repositoryArtists "loudy-back/internal/storage/artists"
 	"net/http"
 	"os"
 
@@ -25,12 +24,10 @@ func main() {
 	cfg := config.MustLoad()
 	log := common.SetupLogger(cfg.Env)
 
-	mongoDb, err := mongo_db.Connect()
-	if err != nil {
-		return
-	}
-
-	artistsStorage := repositoryArtists.NewStorage(mongoDb, "artists", log)
+	// mongoDb, err := mongo_db.Connect()
+	// if err != nil {
+	// 	return
+	// }
 
 	// postgreStorage, err := postgre.New()
 	// if err != nil {
@@ -38,7 +35,8 @@ func main() {
 	// }
 
 	authClient, _ := NewAuthClient(common.GrpcAuthAddress(cfg), cfg.Clients.Auth.Timeout, cfg.Clients.Auth.RetriesCount)
-	artistsClient, _ := artists.NewArtistsClient(common.GrpcArtistsddress(cfg), cfg.Clients.Artists.Timeout, cfg.Clients.Artists.RetriesCount, artistsStorage)
+	artistsClient, _ := artists.NewArtistsClient(common.GrpcArtistsAddress(cfg), cfg.Clients.Artists.Timeout, cfg.Clients.Artists.RetriesCount)
+	albumsClient, _ := albums.NewAlbumsClient(common.GrpcAlbumsAddress(cfg), cfg.Clients.Albums.Timeout, cfg.Clients.Albums.RetriesCount, log)
 
 	router := mux.NewRouter()
 
@@ -47,6 +45,9 @@ func main() {
 
 	router.HandleFunc("/api/artist", artistsClient.Artist).Methods(http.MethodGet, http.MethodOptions)
 	router.HandleFunc("/api/artist", artistsClient.CreateArtist).Methods(http.MethodPost, http.MethodOptions)
+
+	router.HandleFunc("/api/album", albumsClient.Album).Methods(http.MethodGet, http.MethodOptions)
+	router.HandleFunc("/api/album", albumsClient.CreateAlbum).Methods(http.MethodPost, http.MethodOptions)
 
 	handler := middlewares.CorsMiddleware(router)
 	fmt.Println("Server is listening...")

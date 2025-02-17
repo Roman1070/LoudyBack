@@ -23,7 +23,7 @@ func main() {
 
 	artistsStorage := repositoryArtists.NewStorage(mongoDb, "artists", log)
 
-	artistsClient, _ := artists.NewArtistsClient(common.GrpcArtistsddress(cfg),
+	artistsClient, _ := artists.NewArtistsClient(common.GrpcArtistsAddress(cfg),
 		cfg.Clients.Artists.Timeout, cfg.Clients.Artists.RetriesCount, artistsStorage)
 
 	albumsApp, err := appAlbums.New(log, cfg.GRPC.Albums.Port, artistsClient.ArtistsGRPCClient)
