@@ -2,6 +2,7 @@ package content
 
 import (
 	"context"
+	"errors"
 	"io"
 	"log/slog"
 	models "loudy-back/internal/domain/models/content"
@@ -93,6 +94,30 @@ func TestContentService_CreateArtist(t *testing.T) {
 			},
 			want: want{
 				err: storage.ErrArtistAlreadyExists,
+			},
+		},
+		{
+			name:       "Внутренняя ошибка",
+			artistName: "artist name",
+			cover:      "",
+			bio:        "",
+			setupFunc: func(ctrl *gomock.Controller) *ContentService {
+				contentCreator := mock_content.NewMockContentCreator(ctrl)
+				contentProvider := mock_content.NewMockContentProvider(ctrl)
+
+				contentProvider.EXPECT().Artist(gomock.Any(), "artist name").Return(models.Artist{}, storage.ErrArtistNotFound)
+
+				contentCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").
+					Return(&emptypb.Empty{}, errors.New("some error"))
+
+				return &ContentService{
+					contentCreator:  contentCreator,
+					contentProvider: contentProvider,
+					log:             slog.New(slog.NewTextHandler(io.Discard, nil)),
+				}
+			},
+			want: want{
+				err: errors.New("[CreateArtist] service error: some error"),
 			},
 		},
 	}
