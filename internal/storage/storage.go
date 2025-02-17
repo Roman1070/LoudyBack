@@ -7,4 +7,5 @@ var (
 	ErrUserNotFound        = errors.New("user not found")
 	ErrArtistNotFound      = errors.New("artist not found")
 	ErrArtistAlreadyExists = errors.New("artist already exists")
+	ErrAlbumNotFound       = errors.New("album not found")
 )

@@ -14,6 +14,7 @@ import (
 	models "loudy-back/internal/domain/models/artists"
 	reflect "reflect"
 
+	primitive "go.mongodb.org/mongo-driver/bson/primitive"
 	gomock "go.uber.org/mock/gomock"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
@@ -55,6 +56,21 @@ func (m *MockArtists) Artist(ctx context.Context, name string) (models.Artist, e
 func (mr *MockArtistsMockRecorder) Artist(ctx, name any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Artist", reflect.TypeOf((*MockArtists)(nil).Artist), ctx, name)
+}
+
+// Artists mocks base method.
+func (m *MockArtists) Artists(ctx context.Context, ids []primitive.ObjectID) ([]models.Artist, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Artists", ctx, ids)
+	ret0, _ := ret[0].([]models.Artist)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Artists indicates an expected call of Artists.
+func (mr *MockArtistsMockRecorder) Artists(ctx, ids any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Artists", reflect.TypeOf((*MockArtists)(nil).Artists), ctx, ids)
 }
 
 // CreateArtist mocks base method.

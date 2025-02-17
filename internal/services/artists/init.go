@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	models "loudy-back/internal/domain/models/artists"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -15,6 +16,7 @@ type ArtistsService struct {
 
 type Artists interface {
 	Artist(ctx context.Context, name string) (models.Artist, error)
+	Artists(ctx context.Context, ids []primitive.ObjectID) ([]models.Artist, error)
 	CreateArtist(ctx context.Context, name, cover, bio string) (*emptypb.Empty, error)
 }
 

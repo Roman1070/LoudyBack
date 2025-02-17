@@ -8,7 +8,16 @@ option go_package = "loudy.artists.v1;artistsv1";
 
 service Artists{
     rpc Artist(ArtistRequest) returns (ArtistResponse);
+    rpc Artists(ArtistsRequest) returns (ArtistsResponse);
     rpc CreateArtist(CreateArtistRequest) returns (google.protobuf.Empty){}
+}
+
+message ArtistsRequest{
+    repeated string ids = 1;
+}
+
+message ArtistsResponse{
+    repeated ArtistData artists = 1;
 }
 
 message ArtistRequest{

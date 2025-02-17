@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	authv1 "loudy-back/gen/go/auth"
 	"loudy-back/internal/services/auth"
@@ -31,7 +30,7 @@ func (s *serverAPI) Login(ctx context.Context, req *authv1.LoginRequest) (*authv
 	slog.Info("started to login")
 	if err := validateLogin(req); err != nil {
 		slog.Error("grpc Login error: " + err.Error())
-		return nil, fmt.Errorf("grpc Login error: " + err.Error())
+		return nil, errors.New("grpc Login error: " + err.Error())
 	}
 
 	token, err := s.auth.Login(ctx, req.GetEmail(), req.GetPassword())
@@ -41,7 +40,7 @@ func (s *serverAPI) Login(ctx context.Context, req *authv1.LoginRequest) (*authv
 		}
 
 		slog.Error("grpc Login error: " + err.Error())
-		return nil, fmt.Errorf("grpc Login error: " + err.Error())
+		return nil, errors.New("grpc Login error: " + err.Error())
 	}
 
 	resp := &authv1.LoginResponse{Token: token}
@@ -54,7 +53,7 @@ func (s *serverAPI) Register(ctx context.Context, req *authv1.RegisterRequest) (
 
 	if err := validateRegister(req); err != nil {
 		slog.Error("grpc Register error: " + err.Error())
-		return nil, fmt.Errorf("grpc Register error: " + err.Error())
+		return nil, errors.New("grpc Register error: " + err.Error())
 	}
 
 	userID, err := s.auth.RegisterNewUser(ctx, email, password)
@@ -64,7 +63,7 @@ func (s *serverAPI) Register(ctx context.Context, req *authv1.RegisterRequest) (
 			return nil, status.Error(codes.AlreadyExists, "User already exists")
 		}
 		slog.Error("grpc Register error: " + err.Error())
-		return nil, fmt.Errorf("grpc Register error: " + err.Error())
+		return nil, errors.New("grpc Register error: " + err.Error())
 	}
 	return &authv1.RegisterResponse{
 		UserId: userID,

@@ -16,7 +16,7 @@ func (s *ArtistsStorage) CreateArtist(ctx context.Context, name, cover, bio stri
 		Cover:      cover,
 		Bio:        bio,
 		LikesCount: 0,
-		Albums:     []primitive.ObjectID{},
+		AlbumsIds:  []primitive.ObjectID{},
 	}
 
 	result, err := s.collection.InsertOne(ctx, newArtist)

@@ -21,6 +21,21 @@ func (artist *dtoArtist) toCommonModel() models.Artist {
 		Cover:      artist.Cover,
 		Bio:        artist.Bio,
 		LikesCount: uint32(artist.LikesCount),
-		Albums:     artist.AlbumsIds,
+		AlbumsIds:  artist.AlbumsIds,
 	}
+}
+
+func toCommonModels(artists []dtoArtist) []models.Artist {
+	result := make([]models.Artist, len(artists))
+
+	for i, artist := range artists {
+		result[i] = models.Artist{
+			Name:       artist.Name,
+			Cover:      artist.Cover,
+			Bio:        artist.Bio,
+			AlbumsIds:  artist.AlbumsIds,
+			LikesCount: artist.LikesCount,
+		}
+	}
+	return result
 }
