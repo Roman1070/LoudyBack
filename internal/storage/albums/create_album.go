@@ -3,14 +3,13 @@ package albums
 import (
 	"context"
 	"errors"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func (s *AlbumsStorage) CreateAlbum(ctx context.Context, name, cover string,
-	releaseDate time.Time, artistsIds []primitive.ObjectID) (*emptypb.Empty, error) {
+	releaseDate string, artistsIds []primitive.ObjectID) (*emptypb.Empty, error) {
 	newAlbum := dtoAlbum{
 		Name:        name,
 		Cover:       cover,

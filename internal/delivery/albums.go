@@ -17,17 +17,16 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Albums interface {
 	Album(ctx context.Context, id primitive.ObjectID) (models.Album, error)
-	CreateAlbum(ctx context.Context, name, cover string, releaseDate time.Time, artistsIds []primitive.ObjectID) (*emptypb.Empty, error)
+	CreateAlbum(ctx context.Context, name, cover string, releaseDate string, artistsIds []primitive.ObjectID) (*emptypb.Empty, error)
 }
 
 type AlbumsClient struct {
 	log              *slog.Logger
-	ALbumsGRPCClient albumsv1.AlbumsClient
+	AlbumsGRPCClient albumsv1.AlbumsClient
 }
 
 func NewAlbumsClient(addr string, timeout time.Duration, retriesCount int, log *slog.Logger) (*AlbumsClient, error) {
@@ -48,7 +47,7 @@ func NewAlbumsClient(addr string, timeout time.Duration, retriesCount int, log *
 
 	return &AlbumsClient{
 		log:              log,
-		ALbumsGRPCClient: albumsv1.NewAlbumsClient(cc),
+		AlbumsGRPCClient: albumsv1.NewAlbumsClient(cc),
 	}, nil
 }
 
@@ -64,11 +63,11 @@ func (c *AlbumsClient) CreateAlbum(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = c.ALbumsGRPCClient.CreateAlbum(r.Context(), &albumsv1.CreateAlbumRequest{
+	_, err = c.AlbumsGRPCClient.CreateAlbum(r.Context(), &albumsv1.CreateAlbumRequest{
 		Name:        request.Name,
 		ArtistsIds:  request.ArtistsIds,
 		Cover:       request.Cover,
-		ReleaseDate: timestamppb.New(request.ReleaseDate),
+		ReleaseDate: request.ReleaseDate,
 	})
 
 	if err != nil {
@@ -82,7 +81,7 @@ func (c *AlbumsClient) CreateAlbum(w http.ResponseWriter, r *http.Request) {
 func (c *AlbumsClient) Album(w http.ResponseWriter, r *http.Request) {
 	c.log.Info("[Album] client started")
 
-	resp, err := c.ALbumsGRPCClient.Album(r.Context(), &albumsv1.AlbumRequest{
+	resp, err := c.AlbumsGRPCClient.Album(r.Context(), &albumsv1.AlbumRequest{
 		Id: r.URL.Query().Get("id"),
 	})
 	if err != nil {

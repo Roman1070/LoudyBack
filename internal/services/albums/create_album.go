@@ -5,14 +5,13 @@ import (
 	"fmt"
 	artistsv1 "loudy-back/gen/go/artists"
 	"loudy-back/internal/storage"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func (s *AlbumsService) CreateAlbum(ctx context.Context, name, cover string,
-	releaseDate time.Time, artistsIds []primitive.ObjectID) (*emptypb.Empty, error) {
+	releaseDate string, artistsIds []primitive.ObjectID) (*emptypb.Empty, error) {
 
 	s.log.Info("[CreateAlbum] service started")
 

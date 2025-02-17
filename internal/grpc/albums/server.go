@@ -8,17 +8,15 @@ import (
 	albumsv1 "loudy-back/gen/go/albums"
 	models "loudy-back/internal/domain/models/albums"
 	"loudy-back/utils"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Albums interface {
 	Album(ctx context.Context, id primitive.ObjectID) (models.Album, error)
-	CreateAlbum(ctx context.Context, name, cover string, releaseDate time.Time, artists_ids []primitive.ObjectID) (*emptypb.Empty, error)
+	CreateAlbum(ctx context.Context, name, cover string, releaseDate string, artists_ids []primitive.ObjectID) (*emptypb.Empty, error)
 }
 type serverAPI struct {
 	albums Albums
@@ -67,7 +65,7 @@ func (s *serverAPI) Album(ctx context.Context, req *albumsv1.AlbumRequest) (*alb
 		Id:          album.ID.Hex(),
 		Name:        album.Name,
 		Cover:       album.Cover,
-		ReleaseDate: timestamppb.New(album.ReleaseDate),
+		ReleaseDate: album.ReleaseDate,
 		Artists:     artists,
 		Tracks:      tracks,
 	}, nil
@@ -82,7 +80,7 @@ func (s *serverAPI) CreateAlbum(ctx context.Context, req *albumsv1.CreateAlbumRe
 		return nil, errors.New("[CreateAlbum] grpc error: " + err.Error())
 	}
 
-	_, err = s.albums.CreateAlbum(ctx, req.Name, req.Cover, req.ReleaseDate.AsTime(), ids)
+	_, err = s.albums.CreateAlbum(ctx, req.Name, req.Cover, req.ReleaseDate, ids)
 	if err != nil {
 		s.log.Error("[CreateAlbum] grpc error: " + err.Error())
 		return nil, errors.New("[CreateAlbum] grpc error: " + err.Error())

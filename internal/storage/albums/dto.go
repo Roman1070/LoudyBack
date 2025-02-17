@@ -4,7 +4,6 @@ import (
 	models "loudy-back/internal/domain/models/albums"
 	artistModels "loudy-back/internal/domain/models/artists"
 	trackModels "loudy-back/internal/domain/models/tracks"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -13,7 +12,7 @@ type dtoAlbum struct {
 	ID          primitive.ObjectID   `bson:"omitempty,_id"`
 	Name        string               `bson:"name"`
 	Cover       string               `bson:"cover"`
-	ReleaseDate time.Time            `bson:"release_date"`
+	ReleaseDate string               `bson:"release_date"`
 	ArtistsIds  []primitive.ObjectID `bson:"artists_ids"`
 	TracksIds   []primitive.ObjectID `bson:"tracks_ids"`
 }
