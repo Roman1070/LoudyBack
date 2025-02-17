@@ -5,7 +5,7 @@ grpc:
   auth:
     port: 44000
     timeout: 10h
-  content:
+  artists:
     port: 44001
     timeout: 10h
 clients:
@@ -13,7 +13,7 @@ clients:
     timeout: "4s"
     retriesCount: 5
     insecure: true
-  content:
+  artists:
     timeout: "4s"
     retriesCount: 5
     insecure: true

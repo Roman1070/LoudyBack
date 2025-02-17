@@ -13,14 +13,14 @@ services:
     depends_on:
       - pg_db
 
-  content_go:
+  artists_go:
     build:
       context: .
-      dockerfile: ./cmd/content/Dockerfile
+      dockerfile: ./cmd/artists/Dockerfile
     ports:
       - "44001:44001"
-    image: content-go-image
-    container_name: content-go
+    image: artists-go-image
+    container_name: artists-go
     restart: unless-stopped
     networks:
       - app-network

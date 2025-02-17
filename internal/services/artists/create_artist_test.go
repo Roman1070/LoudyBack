@@ -1,18 +1,19 @@
-package content
+package artists
 
 import (
 	"context"
 	"errors"
 	"io"
 	"log/slog"
-	models "loudy-back/internal/domain/models/content"
+	models "loudy-back/internal/domain/models/artists"
 	"loudy-back/internal/storage"
 	"testing"
 
-	mock_content "loudy-back/internal/services/content/mocks"
+	mock_artists "loudy-back/internal/services/artists/mocks"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.uber.org/mock/gomock"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -37,9 +38,9 @@ func TestContentService_CreateArtist(t *testing.T) {
 		artistName string
 		cover      string
 		bio        string
-		albums     []models.AlbumLight
+		albums     []primitive.ObjectID
 		likesCount uint32
-		setupFunc  func(ctrl *gomock.Controller) *ContentService
+		setupFunc  func(ctrl *gomock.Controller) *ArtistsService
 		want       want
 	}{
 		{
@@ -47,17 +48,17 @@ func TestContentService_CreateArtist(t *testing.T) {
 			artistName: "artist name",
 			cover:      "",
 			bio:        "",
-			setupFunc: func(ctrl *gomock.Controller) *ContentService {
-				contentCreator := mock_content.NewMockContentCreator(ctrl)
-				contentProvider := mock_content.NewMockContentProvider(ctrl)
+			setupFunc: func(ctrl *gomock.Controller) *ArtistsService {
+				contentCreator := mock_artists.NewMockArtistsCreator(ctrl)
+				contentProvider := mock_artists.NewMockArtistsProvider(ctrl)
 
 				contentProvider.EXPECT().Artist(gomock.Any(), "artist name").Return(models.Artist{}, storage.ErrArtistNotFound)
 
 				contentCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").Return(&emptypb.Empty{}, nil)
 
-				return &ContentService{
-					contentCreator:  contentCreator,
-					contentProvider: contentProvider,
+				return &ArtistsService{
+					artistsCreator:  contentCreator,
+					artistsProvider: contentProvider,
 					log:             slog.New(slog.NewTextHandler(io.Discard, nil)),
 				}
 			},
@@ -70,9 +71,9 @@ func TestContentService_CreateArtist(t *testing.T) {
 			artistName: "artist name",
 			cover:      "",
 			bio:        "",
-			setupFunc: func(ctrl *gomock.Controller) *ContentService {
-				contentCreator := mock_content.NewMockContentCreator(ctrl)
-				contentProvider := mock_content.NewMockContentProvider(ctrl)
+			setupFunc: func(ctrl *gomock.Controller) *ArtistsService {
+				contentCreator := mock_artists.NewMockArtistsCreator(ctrl)
+				contentProvider := mock_artists.NewMockArtistsProvider(ctrl)
 
 				artist := models.Artist{
 					Name:       "artist name",
@@ -86,9 +87,9 @@ func TestContentService_CreateArtist(t *testing.T) {
 				contentCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").
 					Return(&emptypb.Empty{}, storage.ErrArtistAlreadyExists).AnyTimes()
 
-				return &ContentService{
-					contentCreator:  contentCreator,
-					contentProvider: contentProvider,
+				return &ArtistsService{
+					artistsCreator:  contentCreator,
+					artistsProvider: contentProvider,
 					log:             slog.New(slog.NewTextHandler(io.Discard, nil)),
 				}
 			},
@@ -101,18 +102,18 @@ func TestContentService_CreateArtist(t *testing.T) {
 			artistName: "artist name",
 			cover:      "",
 			bio:        "",
-			setupFunc: func(ctrl *gomock.Controller) *ContentService {
-				contentCreator := mock_content.NewMockContentCreator(ctrl)
-				contentProvider := mock_content.NewMockContentProvider(ctrl)
+			setupFunc: func(ctrl *gomock.Controller) *ArtistsService {
+				contentCreator := mock_artists.NewMockArtistsCreator(ctrl)
+				contentProvider := mock_artists.NewMockArtistsProvider(ctrl)
 
 				contentProvider.EXPECT().Artist(gomock.Any(), "artist name").Return(models.Artist{}, storage.ErrArtistNotFound)
 
 				contentCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").
 					Return(&emptypb.Empty{}, errors.New("some error"))
 
-				return &ContentService{
-					contentCreator:  contentCreator,
-					contentProvider: contentProvider,
+				return &ArtistsService{
+					artistsCreator:  contentCreator,
+					artistsProvider: contentProvider,
 					log:             slog.New(slog.NewTextHandler(io.Discard, nil)),
 				}
 			},

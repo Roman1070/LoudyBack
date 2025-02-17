@@ -1,18 +1,18 @@
-package content
+package artists
 
 import (
 	"context"
 	"errors"
 	"fmt"
 	"log/slog"
-	models "loudy-back/internal/domain/models/content"
+	models "loudy-back/internal/domain/models/artists"
 	"loudy-back/internal/storage"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (c *ContentStorage) Artist(ctx context.Context, name string) (models.Artist, error) {
+func (c *ArtistsStorage) Artist(ctx context.Context, name string) (models.Artist, error) {
 	c.log.Info("[Artist] storage started")
 
 	filter := bson.M{"name": name}

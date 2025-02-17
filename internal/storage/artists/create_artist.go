@@ -1,21 +1,22 @@
-package content
+package artists
 
 import (
 	"context"
 	"fmt"
 	"log/slog"
-	models "loudy-back/internal/domain/models/content"
+	models "loudy-back/internal/domain/models/artists"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *ContentStorage) CreateArtist(ctx context.Context, name, cover, bio string) (*emptypb.Empty, error) {
+func (s *ArtistsStorage) CreateArtist(ctx context.Context, name, cover, bio string) (*emptypb.Empty, error) {
 	newArtist := models.Artist{
 		Name:       name,
 		Cover:      cover,
 		Bio:        bio,
 		LikesCount: 0,
-		Albums:     []models.AlbumLight{},
+		Albums:     []primitive.ObjectID{},
 	}
 
 	result, err := s.collection.InsertOne(ctx, newArtist)

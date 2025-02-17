@@ -49,6 +49,6 @@ func GrpcAuthAddress(cfg *config.Config) string {
 	return fmt.Sprintf("auth-go:%v", cfg.GRPC.Auth.Port)
 }
 
-func GrpcContentAddress(cfg *config.Config) string {
-	return fmt.Sprintf("content-go:%v", cfg.GRPC.Content.Port)
+func GrpcArtistsddress(cfg *config.Config) string {
+	return fmt.Sprintf("artists-go:%v", cfg.GRPC.Artists.Port)
 }

@@ -10,13 +10,13 @@ import (
 	"google.golang.org/grpc/status"
 
 	common "loudy-back/internal/app"
-	contentgrpc "loudy-back/internal/grpc/content"
+	artistsgrpc "loudy-back/internal/grpc/artists"
 )
 
 // New creates new gRPC server app.
 func New(
 	log *slog.Logger,
-	contentService contentgrpc.Content,
+	artistsService artistsgrpc.Artists,
 	port int,
 ) *common.App {
 	loggingOpts := []logging.Option{
@@ -40,7 +40,7 @@ func New(
 		logging.UnaryServerInterceptor(common.InterceptorLogger(log), loggingOpts...),
 	))
 
-	contentgrpc.Register(gRPCServer, contentService, log)
+	artistsgrpc.Register(gRPCServer, artistsService, log)
 
 	return &common.App{
 		Log:        log,

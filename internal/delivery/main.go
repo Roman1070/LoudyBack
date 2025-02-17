@@ -6,7 +6,7 @@ import (
 	mongo_db "loudy-back/configs/mongo"
 	"loudy-back/internal/config"
 	"loudy-back/internal/middlewares"
-	repositoryContent "loudy-back/internal/storage/content"
+	repositoryArtists "loudy-back/internal/storage/artists"
 	"net/http"
 	"os"
 
@@ -29,7 +29,7 @@ func main() {
 		return
 	}
 
-	contentStorage := repositoryContent.NewStorage(mongoDb, "artists", log)
+	artistsStorage := repositoryArtists.NewStorage(mongoDb, "artists", log)
 
 	// postgreStorage, err := postgre.New()
 	// if err != nil {
@@ -37,15 +37,15 @@ func main() {
 	// }
 
 	authClient, _ := NewAuthClient(common.GrpcAuthAddress(cfg), cfg.Clients.Auth.Timeout, cfg.Clients.Auth.RetriesCount)
-	contentClient, _ := NewContentClient(common.GrpcContentAddress(cfg), cfg.Clients.Content.Timeout, cfg.Clients.Content.RetriesCount, contentStorage)
+	artistsClient, _ := NewArtistsClient(common.GrpcArtistsddress(cfg), cfg.Clients.Artists.Timeout, cfg.Clients.Artists.RetriesCount, artistsStorage)
 
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/register", authClient.Regsiter).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc("/api/login", authClient.Login).Methods(http.MethodPost, http.MethodOptions)
 
-	router.HandleFunc("/api/artist", contentClient.Artist).Methods(http.MethodGet, http.MethodOptions)
-	router.HandleFunc("/api/artist", contentClient.CreateArtist).Methods(http.MethodPost, http.MethodOptions)
+	router.HandleFunc("/api/artist", artistsClient.Artist).Methods(http.MethodGet, http.MethodOptions)
+	router.HandleFunc("/api/artist", artistsClient.CreateArtist).Methods(http.MethodPost, http.MethodOptions)
 
 	handler := middlewares.CorsMiddleware(router)
 	fmt.Println("Server is listening...")

@@ -5,9 +5,9 @@ import (
 	"log/slog"
 	mongo_db "loudy-back/configs/mongo"
 	common "loudy-back/internal/app"
-	grpcApp "loudy-back/internal/app/grpc/content"
-	"loudy-back/internal/services/content"
-	repositoryContent "loudy-back/internal/storage/content"
+	grpcApp "loudy-back/internal/app/grpc/artists"
+	content "loudy-back/internal/services/artists"
+	repositoryArtists "loudy-back/internal/storage/artists"
 )
 
 type App struct {
@@ -24,11 +24,11 @@ func New(
 		return nil, fmt.Errorf("[ ERROR ] не инициализируется монго %v", err)
 	}
 
-	repo := repositoryContent.NewStorage(mongoDb, "artists", log)
+	repo := repositoryArtists.NewStorage(mongoDb, "artists", log)
 
-	contentService := content.New(log, repo, repo)
+	artistsService := content.New(log, repo, repo)
 
-	grpcApp := grpcApp.New(log, contentService, grpcPort)
+	grpcApp := grpcApp.New(log, artistsService, grpcPort)
 
 	return &App{
 		GRPCServer: grpcApp,

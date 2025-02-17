@@ -25,11 +25,11 @@ type Client struct {
 }
 type ClientsConfig struct {
 	Auth    Client `yaml:"auth"`
-	Content Client `yaml:"content"`
+	Artists Client `yaml:"artists"`
 }
 type GRPCConfig struct {
 	Auth    MicroserviceGRPCConfig `yaml:"auth"`
-	Content MicroserviceGRPCConfig `yaml:"content"`
+	Artists MicroserviceGRPCConfig `yaml:"artists"`
 }
 type MicroserviceGRPCConfig struct {
 	Port    int           `yaml:"port"`

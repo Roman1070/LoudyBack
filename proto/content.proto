@@ -7,19 +7,10 @@ package content;
 option go_package = "loudy.content.v1;contentv1";
 
 service Content{
-    rpc CreateArtist(CreateArtistRequest) returns (google.protobuf.Empty){}
     rpc CreateTrack(CreateTrackRequest) returns  (google.protobuf.Empty) {}
     rpc CreateAlbum(CreateAlbumRequest) returns (google.protobuf.Empty) {}
 }
 
-message CreateArtistRequest{
-    string name = 1;
-    string cover = 2;
-    string bio = 3;
-}
-message CreateArtistResponse{
-    uint32 id=1;
-}
 message ArtistData{    
     string id = 1;
     repeated AlbumDataLight albums = 2;

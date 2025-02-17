@@ -2,7 +2,7 @@ package main
 
 import (
 	common "loudy-back/cmd"
-	appContent "loudy-back/internal/app/content"
+	appArtists "loudy-back/internal/app/artists"
 	"loudy-back/internal/config"
 	"os"
 	"os/signal"
@@ -14,13 +14,13 @@ func main() {
 
 	log := common.SetupLogger(cfg.Env)
 
-	contentApp, err := appContent.New(log, cfg.GRPC.Content.Port)
+	artistsApp, err := appArtists.New(log, cfg.GRPC.Artists.Port)
 	if err != nil {
 		panic(err)
 	}
 
 	go func() {
-		contentApp.GRPCServer.MustRun()
+		artistsApp.GRPCServer.MustRun()
 	}()
 
 	stop := make(chan os.Signal, 1)
@@ -28,6 +28,6 @@ func main() {
 
 	<-stop
 
-	contentApp.GRPCServer.Stop()
+	artistsApp.GRPCServer.Stop()
 	log.Info("Gracefully stopped")
 }

@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
-	contentv1 "loudy-back/gen/go/content"
-	models "loudy-back/internal/domain/models/content"
-	"loudy-back/internal/services/content"
+	artistsv1 "loudy-back/gen/go/artists"
+	models "loudy-back/internal/domain/models/artists"
+	"loudy-back/internal/services/artists"
 	"loudy-back/internal/storage"
 	"loudy-back/utils"
 	"net/http"
@@ -19,12 +19,12 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type ContentClient struct {
-	contentProvider content.ContentProvider
-	contentCreator  contentv1.ContentClient
+type ArtistsClient struct {
+	artistsProvider artists.ArtistsProvider
+	artistsClient   artistsv1.ArtistsClient
 }
 
-func NewContentClient(addr string, timeout time.Duration, retriesCount int, contentProvider content.ContentProvider) (*ContentClient, error) {
+func NewArtistsClient(addr string, timeout time.Duration, retriesCount int, artistsProvider artists.ArtistsProvider) (*ArtistsClient, error) {
 	retryOptions := []grpcretry.CallOption{
 		grpcretry.WithCodes(codes.NotFound, codes.Aborted, codes.DeadlineExceeded),
 		grpcretry.WithMax(uint(retriesCount)),
@@ -35,21 +35,21 @@ func NewContentClient(addr string, timeout time.Duration, retriesCount int, cont
 		grpcretry.UnaryClientInterceptor(retryOptions...),
 	))
 	if err != nil {
-		slog.Error("[NewContentClient] client error: " + err.Error())
-		return nil, fmt.Errorf("%s", "[NewContentClient] client  error: "+err.Error())
+		slog.Error("[NewartistsClient] client error: " + err.Error())
+		return nil, fmt.Errorf("%s", "[NewartistsClient] client  error: "+err.Error())
 	}
 
-	return &ContentClient{
-		contentProvider: contentProvider,
-		contentCreator:  contentv1.NewContentClient(cc),
+	return &ArtistsClient{
+		artistsProvider: artistsProvider,
+		artistsClient:   artistsv1.NewArtistsClient(cc),
 	}, nil
 }
 
-func (c *ContentClient) Artist(w http.ResponseWriter, r *http.Request) {
+func (c *ArtistsClient) Artist(w http.ResponseWriter, r *http.Request) {
 	slog.Info("client start [Artist]")
 	name := r.URL.Query().Get("name")
 
-	artist, err := c.contentProvider.Artist(r.Context(), name)
+	artist, err := c.artistsProvider.Artist(r.Context(), name)
 	if err != nil {
 		slog.Error("[Artist] client error: " + err.Error())
 		utils.WriteError(w, "Internal error")
@@ -67,7 +67,7 @@ func (c *ContentClient) Artist(w http.ResponseWriter, r *http.Request) {
 	w.Write(result)
 }
 
-func (c *ContentClient) CreateArtist(w http.ResponseWriter, r *http.Request) {
+func (c *ArtistsClient) CreateArtist(w http.ResponseWriter, r *http.Request) {
 	slog.Info("[CreateArtist] client started ")
 
 	var request models.CreateArtistRequest
@@ -79,7 +79,7 @@ func (c *ContentClient) CreateArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = c.contentCreator.CreateArtist(r.Context(), request.ToGRPC())
+	_, err = c.artistsClient.CreateArtist(r.Context(), request.ToGRPC())
 	if err != nil {
 		slog.Error("[CreateArtist] client error: " + err.Error())
 		if strings.Contains(err.Error(), storage.ErrArtistAlreadyExists.Error()) {
