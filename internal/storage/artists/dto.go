@@ -17,7 +17,6 @@ type dtoArtist struct {
 
 func (artist *dtoArtist) toCommonModel() models.Artist {
 	return models.Artist{
-		ID:         artist.ID,
 		Name:       artist.Name,
 		Cover:      artist.Cover,
 		Bio:        artist.Bio,

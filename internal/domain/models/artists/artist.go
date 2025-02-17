@@ -3,10 +3,9 @@ package models
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type Artist struct {
-	ID         primitive.ObjectID
 	Name       string
 	Albums     []primitive.ObjectID
 	Cover      string
 	Bio        string
-	LikesCount uint32
+	LikesCount uint32 `bson:"likes_count"`
 }
