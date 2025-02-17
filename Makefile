@@ -4,6 +4,8 @@ gen_auth:
 	protoc -I proto proto/auth.proto --go_out=./gen/go/auth/ --go_opt=paths=source_relative --go-grpc_out=./gen/go/auth/ --go-grpc_opt=paths=source_relative
 gen_artists:
 	protoc -I proto proto/artists.proto --go_out=./gen/go/artists/ --go_opt=paths=source_relative --go-grpc_out=./gen/go/artists/ --go-grpc_opt=paths=source_relative
+gen_albums:
+	protoc -I proto proto/albums.proto --go_out=./gen/go/albums/ --go_opt=paths=source_relative --go-grpc_out=./gen/go/albums/ --go-grpc_opt=paths=source_relative
 auth:
 	go run cmd/auth/main.go
 

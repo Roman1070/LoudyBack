@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+package albums;
+
+
+option go_package = "loudy.albumsv1;albumsv1";
+
+service Albums{
+    rpc Album(AlbumRequest) returns (AlbumResponse);
+    rpc AlbumLight(AlbumLightRequest) returns (AlbumLightResponse);
+    rpc CreateAlbum(CreateAlbumRequest) returns (google.protobuf.Empty){}
+}
+
+message AlbumRequest{
+    string id=1;
+}
+
+message AlbumResponse{
+    string id = 1;
+    string name = 2;
+    string cover = 3;
+    repeated ArtistLight artists = 4;
+    repeated TrackLight tracks = 5;
+    google.protobuf.Timestamp release_date = 6;
+}
+
+message TrackLight{
+    string id = 1;
+    string name = 2;
+    uint32 duration = 3;
+}
+
+message ArtistLight{
+    string id = 1;
+    string name = 2;
+}
+
+message AlbumLightRequest{
+    string id = 1;
+}
+
+message AlbumLightResponse{
+    string id = 1;
+    string name = 2;
+    string cover = 3;
+    uint32 year = 4;
+}
+
+message CreateAlbumRequest{
+    string name = 1;
+    repeated string artists_ids = 2;
+    string cover = 3;
+    google.protobuf.Timestamp release_date = 4;
+}
