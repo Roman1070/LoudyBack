@@ -29,6 +29,22 @@ services:
     depends_on:
       - mongo_db
 
+  albums_go:
+      build:
+        context: .
+        dockerfile: ./cmd/albums/Dockerfile
+      ports:
+        - "44002:44002"
+      image: albums-go-image
+      container_name: albums-go
+      restart: unless-stopped
+      networks:
+        - app-network
+      volumes:
+        - ./files:/app/files
+      depends_on:
+        - mongo_db
+
   clients_go:
     build:
       context: .
