@@ -64,6 +64,37 @@ func TestContentService_CreateArtist(t *testing.T) {
 				err: nil,
 			},
 		},
+		{
+			name:       "Артист уже существует",
+			artistName: "artist name",
+			cover:      "",
+			bio:        "",
+			setupFunc: func(ctrl *gomock.Controller) *ContentService {
+				contentCreator := mock_content.NewMockContentCreator(ctrl)
+				contentProvider := mock_content.NewMockContentProvider(ctrl)
+
+				artist := models.Artist{
+					Name:       "artist name",
+					Bio:        "",
+					Cover:      "",
+					LikesCount: 0,
+				}
+
+				contentProvider.EXPECT().Artist(gomock.Any(), "artist name").Return(artist, nil)
+
+				contentCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").
+					Return(&emptypb.Empty{}, storage.ErrArtistAlreadyExists).AnyTimes()
+
+				return &ContentService{
+					contentCreator:  contentCreator,
+					contentProvider: contentProvider,
+					log:             slog.New(slog.NewTextHandler(io.Discard, nil)),
+				}
+			},
+			want: want{
+				err: storage.ErrArtistAlreadyExists,
+			},
+		},
 	}
 
 	for _, tt := range tests {
