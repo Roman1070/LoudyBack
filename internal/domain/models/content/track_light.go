@@ -1,7 +1,9 @@
 package models
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type TrackLight struct {
-	ID      uint32
+	ID      primitive.ObjectID
 	Name    string
-	AlbumId uint32
+	AlbumId primitive.ObjectID
 }

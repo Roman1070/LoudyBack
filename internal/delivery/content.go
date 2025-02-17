@@ -7,8 +7,10 @@ import (
 	contentv1 "loudy-back/gen/go/content"
 	models "loudy-back/internal/domain/models/content"
 	"loudy-back/internal/services/content"
+	"loudy-back/internal/storage"
 	"loudy-back/utils"
 	"net/http"
+	"strings"
 	"time"
 
 	grpcretry "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/retry"
@@ -77,20 +79,16 @@ func (c *ContentClient) CreateArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := c.contentCreator.CreateArtist(r.Context(), request.ToGRPC())
+	_, err = c.contentCreator.CreateArtist(r.Context(), request.ToGRPC())
 	if err != nil {
 		slog.Error("[CreateArtist] client error: " + err.Error())
-		utils.WriteError(w, "Internal error")
-		return
-	}
-
-	result, err := json.Marshal(resp)
-	if err != nil {
-		slog.Error("[CreateArtist] client error: " + err.Error())
-		utils.WriteError(w, "Internal error")
+		if strings.Contains(err.Error(), storage.ErrArtistAlreadyExists.Error()) {
+			utils.WriteError(w, fmt.Sprintf("Artist %v already exists.", request.Name))
+		} else {
+			utils.WriteError(w, "Internal error")
+		}
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write(result)
 }

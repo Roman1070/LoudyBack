@@ -5,16 +5,18 @@ import (
 	"fmt"
 	"log/slog"
 	contentv1 "loudy-back/gen/go/content"
+	models "loudy-back/internal/domain/models/content"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type Content interface {
 	CreateArtist(ctx context.Context, name, cover, bio string) (*emptypb.Empty, error)
-	CreateTrack(ctx context.Context, name, file string, albumId uint32) (*emptypb.Empty, error)
-	CreateAlbum(ctx context.Context, name, cover string, tracksIds []uint32, releaseDate time.Time) (uint32, error)
+	CreateTrack(ctx context.Context, name, file string, albumId primitive.ObjectID) (*emptypb.Empty, error)
+	CreateAlbum(ctx context.Context, name, cover string, tracks []models.TrackLight, releaseDate time.Time) (*emptypb.Empty, error)
 }
 
 type serverAPI struct {
@@ -27,7 +29,7 @@ func Register(gRPC *grpc.Server, content Content, log *slog.Logger) {
 	contentv1.RegisterContentServer(gRPC, &serverAPI{content: content, log: log})
 }
 
-func (s *serverAPI) CreateAlbum(ctx context.Context, req *contentv1.CreateAlbumRequest) (*contentv1.CreateAlbumResponse, error) {
+func (s *serverAPI) CreateAlbum(ctx context.Context, req *contentv1.CreateAlbumRequest) (*emptypb.Empty, error) {
 	return nil, nil
 }
 

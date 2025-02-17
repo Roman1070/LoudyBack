@@ -16,22 +16,22 @@ func (a *AuthService) Login(ctx context.Context, email string, password string) 
 		if errors.Is(err, storage.ErrUserNotFound) {
 			a.log.Warn("user not found", sl.Err(err))
 
-			return "", fmt.Errorf("service Login error: " + ErrUserNotFound.Error())
+			return "", fmt.Errorf("%s", "service Login error: "+ErrUserNotFound.Error())
 		}
 
 		a.log.Error("failed to get user", sl.Err(err))
-		return "", fmt.Errorf("service Login error: " + ErrInvalidCredentials.Error())
+		return "", fmt.Errorf("%s", "service Login error: "+ErrInvalidCredentials.Error())
 	}
 
 	if !utils.VerifyPassword(string(user.PasswordHash), password) {
 		a.log.Info("invalid credentials")
-		return "", fmt.Errorf("service Login error: " + ErrInvalidCredentials.Error())
+		return "", fmt.Errorf("%s", "service Login error: "+ErrInvalidCredentials.Error())
 	}
 
 	token, err := jwt.NewToken(user, a.tokenTTL)
 	if err != nil {
 		a.log.Error("Failed to generate token", sl.Err(err))
-		return "", fmt.Errorf("service Login error: " + err.Error())
+		return "", fmt.Errorf("%s", "service Login error: "+err.Error())
 	}
 
 	return token, nil

@@ -29,5 +29,6 @@ func (c *ContentStorage) Artist(ctx context.Context, name string) (models.Artist
 		return models.Artist{}, fmt.Errorf("%s", "[Artist] storage error: "+err.Error())
 	}
 
+	c.log.Info("[Artist] storage finished, result: " + fmt.Sprint(result))
 	return result.toCommonModel(), nil
 }

@@ -1,9 +1,13 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Album struct {
-	ID          uint32
+	ID          primitive.ObjectID
 	Artists     []ArtistLight
 	Name        string
 	Cover       string

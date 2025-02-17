@@ -2,7 +2,6 @@ package content
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"loudy-back/internal/storage"
 
@@ -13,11 +12,9 @@ func (s *ContentService) CreateArtist(ctx context.Context, name, cover, bio stri
 	s.log.Info("[CreateArtist] service started")
 
 	_, err := s.contentProvider.Artist(ctx, name)
-	if err != nil {
-		if !errors.Is(err, storage.ErrArtistNotFound) {
-			s.log.Error("[CreateArtist] service error: " + err.Error())
-			return nil, fmt.Errorf("%s", "[CreateArtist] service error: "+err.Error())
-		}
+	if err == nil {
+		s.log.Error("[CreateArtist] service error: Artist already exists")
+		return nil, storage.ErrArtistAlreadyExists
 	}
 
 	id, err := s.contentCreator.CreateArtist(ctx, name, cover, bio)

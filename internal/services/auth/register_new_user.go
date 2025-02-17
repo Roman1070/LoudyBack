@@ -16,7 +16,7 @@ func (a *AuthService) RegisterNewUser(ctx context.Context, email string, passwor
 	salt, err := utils.GenerateSalt()
 	if err != nil {
 		a.log.Error("Failed to generate salt", sl.Err(err))
-		return -1, fmt.Errorf("service RegisterNewUser error: " + err.Error())
+		return -1, fmt.Errorf("%s", "service RegisterNewUser error: "+err.Error())
 	}
 
 	hashedPassword := utils.HashPassword(password, []byte(salt))
@@ -26,10 +26,11 @@ func (a *AuthService) RegisterNewUser(ctx context.Context, email string, passwor
 		if errors.Is(err, storage.ErrUserExists) {
 			slog.Warn("User already exists")
 
-			return -1, fmt.Errorf("service RegisterNewUser error: " + storage.ErrUserExists.Error())
+			return -1, fmt.Errorf("%s", "service RegisterNewUser error: "+storage.ErrUserExists.Error())
 		}
+
 		slog.Error("Failed to save user", sl.Err(err))
-		return -1, fmt.Errorf("service RegisterNewUser error: " + err.Error())
+		return -1, fmt.Errorf("%s", "service RegisterNewUser error: "+err.Error())
 	}
 
 	return id, nil
