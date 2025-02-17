@@ -5,6 +5,7 @@ import (
 	"io"
 	"log/slog"
 	models "loudy-back/internal/domain/models/content"
+	"loudy-back/internal/storage"
 	"testing"
 
 	mock_content "loudy-back/internal/services/content/mocks"
@@ -49,11 +50,7 @@ func TestContentService_CreateArtist(t *testing.T) {
 				contentCreator := mock_content.NewMockContentCreator(ctrl)
 				contentProvider := mock_content.NewMockContentProvider(ctrl)
 
-				artist := models.Artist{
-					Name: "any other name",
-				}
-
-				contentProvider.EXPECT().Artist(gomock.Any(), "any other name").Return(artist, nil)
+				contentProvider.EXPECT().Artist(gomock.Any(), "artist name").Return(models.Artist{}, storage.ErrArtistNotFound)
 
 				contentCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").Return(&emptypb.Empty{}, nil)
 
