@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 package artists;
 
@@ -8,7 +7,23 @@ package artists;
 option go_package = "loudy.artists.v1;artistsv1";
 
 service Artists{
+    rpc Artist(ArtistRequest) returns (ArtistResponse);
     rpc CreateArtist(CreateArtistRequest) returns (google.protobuf.Empty){}
+}
+
+message ArtistRequest{
+    string name = 1;
+}
+
+message ArtistResponse{
+    ArtistData artist=1;
+}
+message ArtistData{
+    string name = 1;
+    string bio = 2;
+    string cover = 3;
+    uint32 likes_count=4;
+    repeated string albums_ids=5;
 }
 
 message CreateArtistRequest{

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -17,14 +18,20 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
+type ArtistsProvider interface {
+	Artist(ctx context.Context, name string) (models.Artist, error)
+	CreateArtist(ctx context.Context, name, bio, cover string) (*emptypb.Empty, error)
+}
+
 type ArtistsClient struct {
-	artistsProvider artists.ArtistsProvider
+	artistsProvider artists.Artists
 	artistsClient   artistsv1.ArtistsClient
 }
 
-func NewArtistsClient(addr string, timeout time.Duration, retriesCount int, artistsProvider artists.ArtistsProvider) (*ArtistsClient, error) {
+func NewArtistsClient(addr string, timeout time.Duration, retriesCount int, artists artists.Artists) (*ArtistsClient, error) {
 	retryOptions := []grpcretry.CallOption{
 		grpcretry.WithCodes(codes.NotFound, codes.Aborted, codes.DeadlineExceeded),
 		grpcretry.WithMax(uint(retriesCount)),
@@ -40,7 +47,7 @@ func NewArtistsClient(addr string, timeout time.Duration, retriesCount int, arti
 	}
 
 	return &ArtistsClient{
-		artistsProvider: artistsProvider,
+		artistsProvider: artists,
 		artistsClient:   artistsv1.NewArtistsClient(cc),
 	}, nil
 }

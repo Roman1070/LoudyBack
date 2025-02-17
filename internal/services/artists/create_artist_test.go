@@ -49,17 +49,15 @@ func TestArtistservice_CreateArtist(t *testing.T) {
 			cover:      "",
 			bio:        "",
 			setupFunc: func(ctrl *gomock.Controller) *ArtistsService {
-				artistsCreator := mock_artists.NewMockArtistsCreator(ctrl)
-				artistsProvider := mock_artists.NewMockArtistsProvider(ctrl)
+				artistsService := mock_artists.NewMockArtists(ctrl)
 
-				artistsProvider.EXPECT().Artist(gomock.Any(), "artist name").Return(models.Artist{}, storage.ErrArtistNotFound)
+				artistsService.EXPECT().Artist(gomock.Any(), "artist name").Return(models.Artist{}, storage.ErrArtistNotFound)
 
-				artistsCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").Return(&emptypb.Empty{}, nil)
+				artistsService.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").Return(&emptypb.Empty{}, nil)
 
 				return &ArtistsService{
-					artistsCreator:  artistsCreator,
-					artistsProvider: artistsProvider,
-					log:             slog.New(slog.NewTextHandler(io.Discard, nil)),
+					artists: artistsService,
+					log:     slog.New(slog.NewTextHandler(io.Discard, nil)),
 				}
 			},
 			want: want{
@@ -72,8 +70,7 @@ func TestArtistservice_CreateArtist(t *testing.T) {
 			cover:      "",
 			bio:        "",
 			setupFunc: func(ctrl *gomock.Controller) *ArtistsService {
-				artistsCreator := mock_artists.NewMockArtistsCreator(ctrl)
-				artistsProvider := mock_artists.NewMockArtistsProvider(ctrl)
+				artistsService := mock_artists.NewMockArtists(ctrl)
 
 				artist := models.Artist{
 					Name:       "artist name",
@@ -82,15 +79,14 @@ func TestArtistservice_CreateArtist(t *testing.T) {
 					LikesCount: 0,
 				}
 
-				artistsProvider.EXPECT().Artist(gomock.Any(), "artist name").Return(artist, nil)
+				artistsService.EXPECT().Artist(gomock.Any(), "artist name").Return(artist, nil)
 
-				artistsCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").
+				artistsService.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").
 					Return(&emptypb.Empty{}, storage.ErrArtistAlreadyExists).AnyTimes()
 
 				return &ArtistsService{
-					artistsCreator:  artistsCreator,
-					artistsProvider: artistsProvider,
-					log:             slog.New(slog.NewTextHandler(io.Discard, nil)),
+					artists: artistsService,
+					log:     slog.New(slog.NewTextHandler(io.Discard, nil)),
 				}
 			},
 			want: want{
@@ -103,18 +99,16 @@ func TestArtistservice_CreateArtist(t *testing.T) {
 			cover:      "",
 			bio:        "",
 			setupFunc: func(ctrl *gomock.Controller) *ArtistsService {
-				artistsCreator := mock_artists.NewMockArtistsCreator(ctrl)
-				artistsProvider := mock_artists.NewMockArtistsProvider(ctrl)
+				sertistsService := mock_artists.NewMockArtists(ctrl)
 
-				artistsProvider.EXPECT().Artist(gomock.Any(), "artist name").Return(models.Artist{}, storage.ErrArtistNotFound)
+				sertistsService.EXPECT().Artist(gomock.Any(), "artist name").Return(models.Artist{}, storage.ErrArtistNotFound)
 
-				artistsCreator.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").
+				sertistsService.EXPECT().CreateArtist(gomock.Any(), "artist name", "", "").
 					Return(&emptypb.Empty{}, errors.New("some error"))
 
 				return &ArtistsService{
-					artistsCreator:  artistsCreator,
-					artistsProvider: artistsProvider,
-					log:             slog.New(slog.NewTextHandler(io.Discard, nil)),
+					artists: sertistsService,
+					log:     slog.New(slog.NewTextHandler(io.Discard, nil)),
 				}
 			},
 			want: want{

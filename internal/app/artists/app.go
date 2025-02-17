@@ -26,7 +26,7 @@ func New(
 
 	repo := repositoryArtists.NewStorage(mongoDb, "artists", log)
 
-	artistsService := artists.New(log, repo, repo)
+	artistsService := artists.New(log, repo)
 
 	grpcApp := grpcApp.New(log, artistsService, grpcPort)
 

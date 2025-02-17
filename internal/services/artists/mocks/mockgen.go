@@ -18,32 +18,32 @@ import (
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
-// MockArtistsProvider is a mock of ArtistsProvider interface.
-type MockArtistsProvider struct {
+// MockArtists is a mock of Artists interface.
+type MockArtists struct {
 	ctrl     *gomock.Controller
-	recorder *MockArtistsProviderMockRecorder
+	recorder *MockArtistsMockRecorder
 	isgomock struct{}
 }
 
-// MockArtistsProviderMockRecorder is the mock recorder for MockArtistsProvider.
-type MockArtistsProviderMockRecorder struct {
-	mock *MockArtistsProvider
+// MockArtistsMockRecorder is the mock recorder for MockArtists.
+type MockArtistsMockRecorder struct {
+	mock *MockArtists
 }
 
-// NewMockArtistsProvider creates a new mock instance.
-func NewMockArtistsProvider(ctrl *gomock.Controller) *MockArtistsProvider {
-	mock := &MockArtistsProvider{ctrl: ctrl}
-	mock.recorder = &MockArtistsProviderMockRecorder{mock}
+// NewMockArtists creates a new mock instance.
+func NewMockArtists(ctrl *gomock.Controller) *MockArtists {
+	mock := &MockArtists{ctrl: ctrl}
+	mock.recorder = &MockArtistsMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockArtistsProvider) EXPECT() *MockArtistsProviderMockRecorder {
+func (m *MockArtists) EXPECT() *MockArtistsMockRecorder {
 	return m.recorder
 }
 
 // Artist mocks base method.
-func (m *MockArtistsProvider) Artist(ctx context.Context, name string) (models.Artist, error) {
+func (m *MockArtists) Artist(ctx context.Context, name string) (models.Artist, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Artist", ctx, name)
 	ret0, _ := ret[0].(models.Artist)
@@ -52,37 +52,13 @@ func (m *MockArtistsProvider) Artist(ctx context.Context, name string) (models.A
 }
 
 // Artist indicates an expected call of Artist.
-func (mr *MockArtistsProviderMockRecorder) Artist(ctx, name any) *gomock.Call {
+func (mr *MockArtistsMockRecorder) Artist(ctx, name any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Artist", reflect.TypeOf((*MockArtistsProvider)(nil).Artist), ctx, name)
-}
-
-// MockArtistsCreator is a mock of ArtistsCreator interface.
-type MockArtistsCreator struct {
-	ctrl     *gomock.Controller
-	recorder *MockArtistsCreatorMockRecorder
-	isgomock struct{}
-}
-
-// MockArtistsCreatorMockRecorder is the mock recorder for MockArtistsCreator.
-type MockArtistsCreatorMockRecorder struct {
-	mock *MockArtistsCreator
-}
-
-// NewMockArtistsCreator creates a new mock instance.
-func NewMockArtistsCreator(ctrl *gomock.Controller) *MockArtistsCreator {
-	mock := &MockArtistsCreator{ctrl: ctrl}
-	mock.recorder = &MockArtistsCreatorMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockArtistsCreator) EXPECT() *MockArtistsCreatorMockRecorder {
-	return m.recorder
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Artist", reflect.TypeOf((*MockArtists)(nil).Artist), ctx, name)
 }
 
 // CreateArtist mocks base method.
-func (m *MockArtistsCreator) CreateArtist(ctx context.Context, name, cover, bio string) (*emptypb.Empty, error) {
+func (m *MockArtists) CreateArtist(ctx context.Context, name, cover, bio string) (*emptypb.Empty, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateArtist", ctx, name, cover, bio)
 	ret0, _ := ret[0].(*emptypb.Empty)
@@ -91,7 +67,7 @@ func (m *MockArtistsCreator) CreateArtist(ctx context.Context, name, cover, bio 
 }
 
 // CreateArtist indicates an expected call of CreateArtist.
-func (mr *MockArtistsCreatorMockRecorder) CreateArtist(ctx, name, cover, bio any) *gomock.Call {
+func (mr *MockArtistsMockRecorder) CreateArtist(ctx, name, cover, bio any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateArtist", reflect.TypeOf((*MockArtistsCreator)(nil).CreateArtist), ctx, name, cover, bio)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateArtist", reflect.TypeOf((*MockArtists)(nil).CreateArtist), ctx, name, cover, bio)
 }

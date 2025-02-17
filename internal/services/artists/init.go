@@ -9,23 +9,18 @@ import (
 )
 
 type ArtistsService struct {
-	log             *slog.Logger
-	artistsCreator  ArtistsCreator
-	artistsProvider ArtistsProvider
+	log     *slog.Logger
+	artists Artists
 }
 
-type ArtistsProvider interface {
+type Artists interface {
 	Artist(ctx context.Context, name string) (models.Artist, error)
-}
-
-type ArtistsCreator interface {
 	CreateArtist(ctx context.Context, name, cover, bio string) (*emptypb.Empty, error)
 }
 
-func New(log *slog.Logger, artistsCreator ArtistsCreator, artistsProvider ArtistsProvider) *ArtistsService {
+func New(log *slog.Logger, artists Artists) *ArtistsService {
 	return &ArtistsService{
-		artistsCreator:  artistsCreator,
-		artistsProvider: artistsProvider,
-		log:             log,
+		artists: artists,
+		log:     log,
 	}
 }
