@@ -1,12 +1,12 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 	contentv1 "loudy-back/gen/go/content"
 	models "loudy-back/internal/domain/models/content"
+	"loudy-back/internal/services/content"
 	"loudy-back/utils"
 	"net/http"
 	"time"
@@ -18,17 +18,11 @@ import (
 )
 
 type ContentClient struct {
-	contentProvider ContentProvider
+	contentProvider content.ContentProvider
 	contentCreator  contentv1.ContentClient
 }
 
-type ContentProvider interface {
-	Artist(ctx context.Context, name string) (models.Artist, error)
-	Album(ctx context.Context, id uint32) (models.Album, error)
-	SearchContent(ctx context.Context, input string) ([]models.ArtistLight, []models.AlbumLight, []models.TrackLight, error)
-}
-
-func NewContentClient(addr string, timeout time.Duration, retriesCount int, contentProvider ContentProvider) (*ContentClient, error) {
+func NewContentClient(addr string, timeout time.Duration, retriesCount int, contentProvider content.ContentProvider) (*ContentClient, error) {
 	retryOptions := []grpcretry.CallOption{
 		grpcretry.WithCodes(codes.NotFound, codes.Aborted, codes.DeadlineExceeded),
 		grpcretry.WithMax(uint(retriesCount)),
@@ -72,7 +66,7 @@ func (c *ContentClient) Artist(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *ContentClient) CreateArtist(w http.ResponseWriter, r *http.Request) {
-	slog.Info("client start [CreateArtist]")
+	slog.Info("[CreateArtist] client started ")
 
 	var request models.CreateArtistRequest
 

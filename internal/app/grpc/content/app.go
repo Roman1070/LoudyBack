@@ -40,7 +40,7 @@ func New(
 		logging.UnaryServerInterceptor(common.InterceptorLogger(log), loggingOpts...),
 	))
 
-	contentgrpc.Register(gRPCServer, contentService)
+	contentgrpc.Register(gRPCServer, contentService, log)
 
 	return &common.App{
 		Log:        log,

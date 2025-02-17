@@ -24,9 +24,9 @@ func New(
 		return nil, fmt.Errorf("[ ERROR ] не инициализируется монго %v", err)
 	}
 
-	repo := repositoryContent.NewStorage(mongoDb, "artists")
+	repo := repositoryContent.NewStorage(mongoDb, "artists", log)
 
-	contentService := content.New(log, repo)
+	contentService := content.New(log, repo, repo)
 
 	grpcApp := grpcApp.New(log, contentService, grpcPort)
 

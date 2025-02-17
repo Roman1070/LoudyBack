@@ -12,11 +12,10 @@ import (
 type Config struct {
 	Env string `yaml:"env" env-default:"local"`
 
-	GRPC           GRPCConfig `yaml:"grpc"`
-	MigrationsPath string
-	TokenTTL       time.Duration `yaml:"token_ttl" env-default:"1h"`
-	Clients        ClientsConfig `yaml:"clients"`
-	AppSecret      string        `yaml:"app_secret" env-required:"true" env:"APP_SECRET"`
+	GRPC      GRPCConfig    `yaml:"grpc"`
+	TokenTTL  time.Duration `yaml:"token_ttl" env-default:"1h"`
+	Clients   ClientsConfig `yaml:"clients"`
+	AppSecret string        `yaml:"app_secret" env-required:"true" env:"APP_SECRET"`
 }
 type Client struct {
 	Address      string        `yaml:"address"`

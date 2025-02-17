@@ -46,5 +46,9 @@ func SetupPrettySlog() *slog.Logger {
 }
 
 func GrpcAuthAddress(cfg *config.Config) string {
-	return fmt.Sprintf("auth_go:%v", cfg.GRPC.Auth.Port)
+	return fmt.Sprintf("auth-go:%v", cfg.GRPC.Auth.Port)
+}
+
+func GrpcContentAddress(cfg *config.Config) string {
+	return fmt.Sprintf("content-go:%v", cfg.GRPC.Content.Port)
 }

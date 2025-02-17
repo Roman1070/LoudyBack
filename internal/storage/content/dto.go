@@ -6,7 +6,6 @@ import (
 )
 
 type dtoArtist struct {
-	ID         uint32     `bson:"id"`
 	Name       string     `bson:"name"`
 	Cover      string     `bson:"cover"`
 	Bio        string     `bson:"bio"`
@@ -15,7 +14,6 @@ type dtoArtist struct {
 }
 
 type dtoAlbum struct {
-	ID          uint32           `bson:"id"`
 	Name        string           `bson:"name"`
 	Artists     []dtoArtistLight `bson:"artists"`
 	Cover       string           `bson:"cover"`
@@ -23,12 +21,10 @@ type dtoAlbum struct {
 	Tracks      []dtoTrack       `bson:"tracks"`
 }
 type dtoArtistLight struct {
-	ID    uint32 `bson:"id"`
 	Name  string `bson:"name"`
 	Cover string `bson:"cover"`
 }
 type dtoTrack struct {
-	ID      uint32 `bson:"id"`
 	Name    string `bson:"name"`
 	AlbumId uint32 `bson:"album_id"`
 }
@@ -40,13 +36,11 @@ func (artist *dtoArtist) toCommonModel() models.Artist {
 		tracks := make([]models.TrackLight, len(artist.Albums[i].Tracks))
 		for j, track := range artist.Albums[i].Tracks {
 			tracks[j] = models.TrackLight{
-				ID:      track.ID,
 				Name:    track.Name,
 				AlbumId: track.AlbumId,
 			}
 		}
 		albums[i] = models.AlbumLight{
-			ID:    album.ID,
 			Name:  album.Name,
 			Cover: album.Cover,
 			Year:  uint32(album.ReleaseDate.Year()),
@@ -55,7 +49,6 @@ func (artist *dtoArtist) toCommonModel() models.Artist {
 	}
 
 	return models.Artist{
-		ID:         artist.ID,
 		Name:       artist.Name,
 		Cover:      artist.Cover,
 		Bio:        artist.Bio,
