@@ -2,18 +2,11 @@ package artists
 
 import (
 	"context"
-	"errors"
 	models "loudy-back/internal/domain/models/artists"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (s *ArtistsService) Artist(ctx context.Context, id string) (models.Artist, error) {
-	s.log.Info("[Artist] service started")
-
-	artist, err := s.artists.Artist(ctx, id)
-	if err != nil {
-		s.log.Error("[Artist] service error: " + err.Error())
-		return models.Artist{}, errors.New("[Artist] service error: " + err.Error())
-	}
-
-	return artist, nil
+func (s *ArtistsService) Artist(ctx context.Context, id primitive.ObjectID) (models.Artist, error) {
+	return s.artists.Artist(ctx, id)
 }

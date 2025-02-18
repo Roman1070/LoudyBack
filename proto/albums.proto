@@ -10,9 +10,11 @@ service Albums{
     rpc Album(AlbumRequest) returns (AlbumResponse);
     rpc AlbumLight(AlbumLightRequest) returns (AlbumLightResponse);
     rpc AlbumsLight(AlbumsLightRequest) returns(AlbumsLightResponse);
-    rpc CreateAlbum(CreateAlbumRequest) returns (google.protobuf.Empty){}
+    rpc CreateAlbum(CreateAlbumRequest) returns (CreateAlbumResponse);
 }
-
+message CreateAlbumResponse{
+    string id = 1;
+}
 message AlbumsLightRequest{
     repeated string ids=1;
 }

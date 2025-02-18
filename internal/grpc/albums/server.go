@@ -11,14 +11,15 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type Albums interface {
 	Album(ctx context.Context, id primitive.ObjectID) (models.Album, error)
 	AlbumsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.AlbumLight, error)
-	CreateAlbum(ctx context.Context, name, cover string, releaseDate string, artists_ids []primitive.ObjectID) (*emptypb.Empty, error)
+	CreateAlbum(ctx context.Context, name, cover string, releaseDate string,
+		artists_ids []primitive.ObjectID) (primitive.ObjectID, error)
 }
+
 type serverAPI struct {
 	albums Albums
 	log    *slog.Logger
@@ -72,7 +73,7 @@ func (s *serverAPI) Album(ctx context.Context, req *albumsv1.AlbumRequest) (*alb
 	}, nil
 }
 
-func (s *serverAPI) CreateAlbum(ctx context.Context, req *albumsv1.CreateAlbumRequest) (*emptypb.Empty, error) {
+func (s *serverAPI) CreateAlbum(ctx context.Context, req *albumsv1.CreateAlbumRequest) (*albumsv1.CreateAlbumResponse, error) {
 	s.log.Info("[CreateAlbum] grpc started")
 
 	ids, err := utils.StringsToIdsArray(req.ArtistsIds)
@@ -81,13 +82,15 @@ func (s *serverAPI) CreateAlbum(ctx context.Context, req *albumsv1.CreateAlbumRe
 		return nil, errors.New("[CreateAlbum] grpc error: " + err.Error())
 	}
 
-	_, err = s.albums.CreateAlbum(ctx, req.Name, req.Cover, req.ReleaseDate, ids)
+	resp, err := s.albums.CreateAlbum(ctx, req.Name, req.Cover, req.ReleaseDate, ids)
 	if err != nil {
 		s.log.Error("[CreateAlbum] grpc error: " + err.Error())
 		return nil, errors.New("[CreateAlbum] grpc error: " + err.Error())
 	}
 
-	return nil, nil
+	return &albumsv1.CreateAlbumResponse{
+		Id: resp.Hex(),
+	}, nil
 }
 
 func (s *serverAPI) AlbumsLight(ctx context.Context, req *albumsv1.AlbumsLightRequest) (*albumsv1.AlbumsLightResponse, error) {

@@ -36,7 +36,6 @@ func (c *ArtistsStorage) ArtistsLight(ctx context.Context, ids []primitive.Objec
 		slog.Error("[Artists] storage error: " + err.Error())
 		return nil, fmt.Errorf("%s", "[Artists] storage error: "+err.Error())
 	}
-	c.log.Info("[Artists] results written, results= " + fmt.Sprint(results))
 
 	return toCommonModels(results), nil
 }

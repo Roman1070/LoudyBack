@@ -11,13 +11,14 @@ import (
 	"loudy-back/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (c *ArtistsStorage) Artist(ctx context.Context, name string) (models.Artist, error) {
+func (c *ArtistsStorage) Artist(ctx context.Context, id primitive.ObjectID) (models.Artist, error) {
 	c.log.Info("[Artist] storage started")
 
-	filter := bson.M{"name": name}
+	filter := bson.M{"_id": id}
 
 	var result dtoArtist
 

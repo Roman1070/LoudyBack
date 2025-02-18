@@ -14,7 +14,7 @@ import (
 )
 
 type Artists interface {
-	Artist(ctx context.Context, id string) (models.Artist, error)
+	Artist(ctx context.Context, id primitive.ObjectID) (models.Artist, error)
 	ArtistsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.ArtistLight, error)
 	CreateArtist(ctx context.Context, name, cover, bio string) (*emptypb.Empty, error)
 	AddAlbum(ctx context.Context, artistId []primitive.ObjectID, albumId primitive.ObjectID) (*emptypb.Empty, error)
@@ -53,9 +53,15 @@ func (s *serverAPI) AddAlbum(ctx context.Context, req *artistsv1.AddAlbumRequest
 	return nil, nil
 }
 func (s *serverAPI) Artist(ctx context.Context, req *artistsv1.ArtistRequest) (*artistsv1.ArtistResponse, error) {
-	s.log.Info("[CreateArtist] grpc started")
+	s.log.Info("[Artist] grpc started")
 
-	artist, err := s.artists.Artist(ctx, req.Id)
+	id, err := primitive.ObjectIDFromHex(req.Id)
+	if err != nil {
+		s.log.Error("[Artist] grpc error: " + err.Error())
+		return nil, fmt.Errorf("%s", "[Artist] grpc error: "+err.Error())
+	}
+
+	artist, err := s.artists.Artist(ctx, id)
 	if err != nil {
 		s.log.Error("[Artist] grpc error: " + err.Error())
 		return nil, fmt.Errorf("%s", "[Artist] grpc error: "+err.Error())

@@ -59,7 +59,7 @@ func (mr *MockArtistsMockRecorder) AddAlbum(ctx, artistsIds, albumId any) *gomoc
 }
 
 // Artist mocks base method.
-func (m *MockArtists) Artist(ctx context.Context, id string) (models.Artist, error) {
+func (m *MockArtists) Artist(ctx context.Context, id primitive.ObjectID) (models.Artist, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Artist", ctx, id)
 	ret0, _ := ret[0].(models.Artist)

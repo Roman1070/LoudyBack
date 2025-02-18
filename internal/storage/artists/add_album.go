@@ -17,16 +17,20 @@ func (s *ArtistsStorage) AddAlbum(ctx context.Context, artistsIds []primitive.Ob
 		s.log.Error("[Artists] storage error: " + err.Error())
 		return nil, errors.New("[Artists] storage error: " + err.Error())
 	}
-
+	//TODO: попробовать за один UpdateMany сделать
 	for _, artist := range artists {
 		artist.AlbumsIds = append(artist.AlbumsIds, albumId)
-	}
 
-	filter := bson.M{"_id": bson.M{"$in": artistsIds}}
-	_, err = s.collection.UpdateMany(ctx, filter, artists)
-	if err != nil {
-		s.log.Error("[Artists] storage error: " + err.Error())
-		return nil, errors.New("[Artists] storage error: " + err.Error())
+		filter := bson.M{"_id": artist.ID}
+		update := bson.M{
+			"$set": artist,
+		}
+
+		_, err = s.collection.UpdateOne(ctx, filter, update)
+		if err != nil {
+			s.log.Error("[Artists] storage error: " + err.Error())
+			return nil, errors.New("[Artists] storage error: " + err.Error())
+		}
 	}
 
 	return nil, nil

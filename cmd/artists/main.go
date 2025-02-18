@@ -18,7 +18,7 @@ func main() {
 
 	log := common.SetupLogger(cfg.Env)
 
-	cc, err := grpc.NewClient(common.GrpcArtistsAddress(cfg),
+	cc, err := grpc.NewClient(common.GrpcAlbumsAddress(cfg),
 		grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithChainUnaryInterceptor())
 
 	if err != nil {

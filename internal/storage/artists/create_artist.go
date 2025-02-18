@@ -11,6 +11,7 @@ import (
 
 func (s *ArtistsStorage) CreateArtist(ctx context.Context, name, cover, bio string) (*emptypb.Empty, error) {
 	newArtist := dtoArtist{
+		ID:         primitive.NewObjectID(),
 		Name:       name,
 		Cover:      cover,
 		Bio:        bio,

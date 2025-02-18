@@ -5,12 +5,12 @@ import (
 	"errors"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func (s *AlbumsStorage) CreateAlbum(ctx context.Context, name, cover string,
-	releaseDate string, artistsIds []primitive.ObjectID) (*emptypb.Empty, error) {
+	releaseDate string, artistsIds []primitive.ObjectID) (primitive.ObjectID, error) {
 	newAlbum := dtoAlbum{
+		ID:          primitive.NewObjectID(),
 		Name:        name,
 		Cover:       cover,
 		ReleaseDate: releaseDate,
@@ -21,8 +21,8 @@ func (s *AlbumsStorage) CreateAlbum(ctx context.Context, name, cover string,
 	_, err := s.collection.InsertOne(ctx, newAlbum)
 	if err != nil {
 		s.log.Error("[CreateArtist] storage error: " + err.Error())
-		return nil, errors.New("[CreateArtist] storage error: " + err.Error())
+		return [12]byte{}, errors.New("[CreateArtist] storage error: " + err.Error())
 	}
 
-	return nil, nil
+	return newAlbum.ID, nil
 }
