@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	artistsv1 "loudy-back/gen/go/artists"
 	models "loudy-back/internal/domain/models/artists"
+	"loudy-back/utils"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc"
@@ -13,9 +14,10 @@ import (
 )
 
 type Artists interface {
-	Artist(ctx context.Context, name string) (models.Artist, error)
-	Artists(ctx context.Context, ids []primitive.ObjectID) ([]models.Artist, error)
+	Artist(ctx context.Context, id string) (models.Artist, error)
+	ArtistsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.ArtistLight, error)
 	CreateArtist(ctx context.Context, name, cover, bio string) (*emptypb.Empty, error)
+	AddAlbum(ctx context.Context, artistId []primitive.ObjectID, albumId primitive.ObjectID) (*emptypb.Empty, error)
 }
 type serverAPI struct {
 	artistsv1.UnimplementedArtistsServer
@@ -27,10 +29,33 @@ func Register(gRPC *grpc.Server, artists Artists, log *slog.Logger) {
 	artistsv1.RegisterArtistsServer(gRPC, &serverAPI{artists: artists, log: log})
 }
 
+func (s *serverAPI) AddAlbum(ctx context.Context, req *artistsv1.AddAlbumRequest) (*emptypb.Empty, error) {
+	s.log.Info("[AddAlbum] grpc started")
+
+	artistIds, err := utils.StringsToIdsArray(req.ArtistsIds)
+	if err != nil {
+		s.log.Error("[AddAlbum] grpc error: " + err.Error())
+		return nil, fmt.Errorf("%s", "[AddAlbum] grpc error: "+err.Error())
+	}
+
+	albumId, err := primitive.ObjectIDFromHex(req.AlbumId)
+	if err != nil {
+		s.log.Error("[AddAlbum] grpc error: " + err.Error())
+		return nil, fmt.Errorf("%s", "[AddAlbum] grpc error: "+err.Error())
+	}
+
+	_, err = s.artists.AddAlbum(ctx, artistIds, albumId)
+	if err != nil {
+		s.log.Error("[AddAlbum] grpc error: " + err.Error())
+		return nil, fmt.Errorf("%s", "[AddAlbum] grpc error: "+err.Error())
+	}
+
+	return nil, nil
+}
 func (s *serverAPI) Artist(ctx context.Context, req *artistsv1.ArtistRequest) (*artistsv1.ArtistResponse, error) {
 	s.log.Info("[CreateArtist] grpc started")
 
-	artist, err := s.artists.Artist(ctx, req.Name)
+	artist, err := s.artists.Artist(ctx, req.Id)
 	if err != nil {
 		s.log.Error("[Artist] grpc error: " + err.Error())
 		return nil, fmt.Errorf("%s", "[Artist] grpc error: "+err.Error())
@@ -38,27 +63,23 @@ func (s *serverAPI) Artist(ctx context.Context, req *artistsv1.ArtistRequest) (*
 
 	return artist.ToGRPC(), nil
 }
-func (s *serverAPI) Artists(ctx context.Context, req *artistsv1.ArtistsRequest) (*artistsv1.ArtistsResponse, error) {
-	s.log.Info("[Artists] grpc started")
+func (s *serverAPI) ArtistsLight(ctx context.Context, req *artistsv1.ArtistsLightRequest) (*artistsv1.ArtistsLightResponse, error) {
+	s.log.Info("[ArtistsLight] grpc started")
 
-	ids := make([]primitive.ObjectID, len(req.Ids))
-	for i, id := range req.Ids {
-		newId, err := primitive.ObjectIDFromHex(id)
-		if err != nil {
-			s.log.Error("[Artist] grpc error: " + err.Error())
-			return nil, fmt.Errorf("%s", "[Artist] grpc error: "+err.Error())
-		}
-
-		ids[i] = newId
-	}
-
-	artists, err := s.artists.Artists(ctx, ids)
+	ids, err := utils.StringsToIdsArray(req.Ids)
 	if err != nil {
-		s.log.Error("[Artist] grpc error: " + err.Error())
+		s.log.Error("[ArtistsLight] grpc error: " + err.Error())
 		return nil, fmt.Errorf("%s", "[Artist] grpc error: "+err.Error())
 	}
-	s.log.Info("[Artists] grpc artists recieved, artists= " + fmt.Sprint(artists))
-	return models.ArtistsToGRPC(artists), nil
+
+	artists, err := s.artists.ArtistsLight(ctx, ids)
+	if err != nil {
+		s.log.Error("[ArtistsLight] grpc error: " + err.Error())
+		return nil, fmt.Errorf("%s", "[Artist] grpc error: "+err.Error())
+	}
+
+	s.log.Info("[ArtistsLight] grpc artists recieved, artists= " + fmt.Sprint(artists))
+	return models.ArtistsLightToGRPC(artists), nil
 }
 
 func (s *serverAPI) CreateArtist(ctx context.Context, req *artistsv1.CreateArtistRequest) (*emptypb.Empty, error) {

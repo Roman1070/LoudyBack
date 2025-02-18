@@ -34,7 +34,7 @@ func (c *AlbumsStorage) Album(ctx context.Context, id primitive.ObjectID) (model
 		return models.Album{}, errors.New("[Album] storage error: " + err.Error())
 	}
 
-	artists, err := c.artistsClient.Artists(ctx, &artistsv1.ArtistsRequest{
+	artists, err := c.artistsClient.ArtistsLight(ctx, &artistsv1.ArtistsLightRequest{
 		Ids: utils.IdsToStringArray(result.ArtistsIds),
 	})
 
@@ -43,7 +43,7 @@ func (c *AlbumsStorage) Album(ctx context.Context, id primitive.ObjectID) (model
 		return models.Album{}, errors.New("[Album] storage error: " + err.Error())
 	}
 
-	artistsModels, err := artistsModels.ModelsFromArtistData(artists.Artists)
+	artistsModels, err := artistsModels.ModelsFromArtistDataLight(artists.Artists)
 	if err != nil {
 		slog.Error("[Album] storage error: " + err.Error())
 		return models.Album{}, errors.New("[Album] storage error: " + err.Error())

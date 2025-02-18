@@ -3,10 +3,12 @@ package artists
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
+	albumsv1 "loudy-back/gen/go/albums"
+	albumModels "loudy-back/internal/domain/models/albums"
 	models "loudy-back/internal/domain/models/artists"
 	"loudy-back/internal/storage"
+	"loudy-back/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -26,9 +28,23 @@ func (c *ArtistsStorage) Artist(ctx context.Context, name string) (models.Artist
 		}
 
 		slog.Error("[Artist] storage error: " + err.Error())
-		return models.Artist{}, fmt.Errorf("%s", "[Artist] storage error: "+err.Error())
+		return models.Artist{}, errors.New("[Artist] storage error: " + err.Error())
 	}
 
-	c.log.Info("[Artist] storage finished, result: " + fmt.Sprint(result))
-	return result.toCommonModel(), nil
+	resp, err := c.albumsClient.AlbumsLight(ctx, &albumsv1.AlbumsLightRequest{
+		Ids: utils.IdsToStringArray(result.AlbumsIds),
+	})
+
+	if err != nil {
+		slog.Error("[Artist] storage error: " + err.Error())
+		return models.Artist{}, errors.New("[Artist] storage error: " + err.Error())
+	}
+
+	albums, err := albumModels.GRPCResponseToAlbumsLight(resp.Albums)
+	if err != nil {
+		slog.Error("[Artist] storage error: " + err.Error())
+		return models.Artist{}, errors.New("[Artist] storage error: " + err.Error())
+	}
+
+	return result.toCommonModel(albums), nil
 }

@@ -12,6 +12,6 @@ type Album struct {
 	Name        string
 	Cover       string
 	ReleaseDate string
-	Artists     []models.Artist
+	Artists     []models.ArtistLight
 	Tracks      []trackModels.TrackLight
 }

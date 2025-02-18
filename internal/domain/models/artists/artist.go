@@ -4,7 +4,6 @@ import (
 	"errors"
 	"log/slog"
 	artistsv1 "loudy-back/gen/go/artists"
-	"loudy-back/utils"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -12,14 +11,23 @@ import (
 type Artist struct {
 	ID         primitive.ObjectID
 	Name       string
-	AlbumsIds  []primitive.ObjectID `bson:"albums_ids"`
+	Albums     []AlbumLight
 	Cover      string
 	Bio        string
 	LikesCount uint32 `bson:"likes_count"`
 }
 
 func (artist *Artist) ToGRPC() *artistsv1.ArtistResponse {
-	ids := utils.IdsToStringArray(artist.AlbumsIds)
+	albums := make([]*artistsv1.AlbumLight, len(artist.Albums))
+
+	for i, album := range artist.Albums {
+		albums[i] = &artistsv1.AlbumLight{
+			Id:          album.ID.Hex(),
+			Cover:       album.Cover,
+			Name:        album.Name,
+			ReleaseDate: album.ReleaseDate,
+		}
+	}
 
 	return &artistsv1.ArtistResponse{
 		Artist: &artistsv1.ArtistData{
@@ -28,60 +36,38 @@ func (artist *Artist) ToGRPC() *artistsv1.ArtistResponse {
 			Bio:        artist.Bio,
 			Cover:      artist.Cover,
 			LikesCount: artist.LikesCount,
-			AlbumsIds:  ids,
+			Albums:     albums,
 		},
 	}
 }
 
-func ModelsFromArtistData(artists []*artistsv1.ArtistData) ([]Artist, error) {
-	result := make([]Artist, len(artists))
+func ModelsFromArtistDataLight(artists []*artistsv1.ArtistLight) ([]ArtistLight, error) {
+	result := make([]ArtistLight, len(artists))
 
 	for i, artist := range artists {
-		albumsIds, err := utils.StringsToIdsArray(artist.AlbumsIds)
-
-		if err != nil {
-			slog.Error("[ModelsFromArtistData] error: " + err.Error())
-			return nil, errors.New("[ModelsFromArtistData] error: " + err.Error())
-		}
-
 		id, err := primitive.ObjectIDFromHex(artist.Id)
 		if err != nil {
 			slog.Error("[ModelsFromArtistData] error: " + err.Error())
 			return nil, errors.New("[ModelsFromArtistData] error: " + err.Error())
 		}
 
-		result[i] = Artist{
-			ID:         id,
-			Name:       artist.Name,
-			Bio:        artist.Bio,
-			Cover:      artist.Cover,
-			LikesCount: artist.LikesCount,
-			AlbumsIds:  albumsIds,
+		result[i] = ArtistLight{
+			ID:   id,
+			Name: artist.Name,
 		}
 	}
+
 	return result, nil
 }
 
-func ArtistsToGRPC(artists []Artist) *artistsv1.ArtistsResponse {
-	result := make([]*artistsv1.ArtistData, len(artists))
+func ArtistsLightToGRPC(artists []ArtistLight) *artistsv1.ArtistsLightResponse {
+	result := make([]*artistsv1.ArtistLight, len(artists))
 
 	for i, artist := range artists {
-		ids := make([]string, len(artist.AlbumsIds))
-		for j, id := range artist.AlbumsIds {
-			ids[j] = id.Hex()
-		}
-
-		result[i] = &artistsv1.ArtistData{
-			Id:         artist.ID.Hex(),
-			Name:       artist.Name,
-			Bio:        artist.Bio,
-			Cover:      artist.Cover,
-			LikesCount: artist.LikesCount,
-			AlbumsIds:  ids,
-		}
+		result[i] = artist.ToGRPC()
 	}
 
-	return &artistsv1.ArtistsResponse{
+	return &artistsv1.ArtistsLightResponse{
 		Artists: result,
 	}
 }

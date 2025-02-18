@@ -18,6 +18,7 @@ type AlbumsService struct {
 
 type Albums interface {
 	Album(ctx context.Context, id primitive.ObjectID) (models.Album, error)
+	AlbumsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.AlbumLight, error)
 	CreateAlbum(ctx context.Context, name, cover string, releaseDate string, artists_ids []primitive.ObjectID) (*emptypb.Empty, error)
 }
 

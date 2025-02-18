@@ -40,8 +40,8 @@ func NewArtistsClient(addr string, timeout time.Duration, retriesCount int) (*Ar
 		grpcretry.UnaryClientInterceptor(retryOptions...),
 	))
 	if err != nil {
-		slog.Error("[NewartistsClient] client error: " + err.Error())
-		return nil, fmt.Errorf("%s", "[NewartistsClient] client  error: "+err.Error())
+		slog.Error("[NewArtistsClient] client error: " + err.Error())
+		return nil, fmt.Errorf("%s", "[NewArtistsClient] client  error: "+err.Error())
 	}
 
 	return &ArtistsClient{
@@ -76,11 +76,12 @@ func (c *ArtistsClient) CreateArtist(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *ArtistsClient) Artist(w http.ResponseWriter, r *http.Request) {
-	slog.Info("client start [Artist]")
-	name := r.URL.Query().Get("name")
+	slog.Info("[Artist] client started")
+
+	id := r.URL.Query().Get("id")
 
 	artist, err := c.ArtistsGRPCClient.Artist(r.Context(), &artistsv1.ArtistRequest{
-		Name: name,
+		Id: id,
 	})
 	if err != nil {
 		slog.Error("[Artist] client error: " + err.Error())

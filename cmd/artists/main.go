@@ -2,11 +2,15 @@ package main
 
 import (
 	common "loudy-back/cmd"
+	albumsv1 "loudy-back/gen/go/albums"
 	appArtists "loudy-back/internal/app/artists"
 	"loudy-back/internal/config"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -14,7 +18,16 @@ func main() {
 
 	log := common.SetupLogger(cfg.Env)
 
-	artistsApp, err := appArtists.New(log, cfg.GRPC.Artists.Port)
+	cc, err := grpc.NewClient(common.GrpcArtistsAddress(cfg),
+		grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithChainUnaryInterceptor())
+
+	if err != nil {
+		panic(err)
+	}
+
+	albumsClient := albumsv1.NewAlbumsClient(cc)
+
+	artistsApp, err := appArtists.New(log, cfg.GRPC.Artists.Port, albumsClient)
 	if err != nil {
 		panic(err)
 	}

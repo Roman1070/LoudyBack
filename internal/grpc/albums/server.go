@@ -16,6 +16,7 @@ import (
 
 type Albums interface {
 	Album(ctx context.Context, id primitive.ObjectID) (models.Album, error)
+	AlbumsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.AlbumLight, error)
 	CreateAlbum(ctx context.Context, name, cover string, releaseDate string, artists_ids []primitive.ObjectID) (*emptypb.Empty, error)
 }
 type serverAPI struct {
@@ -87,4 +88,22 @@ func (s *serverAPI) CreateAlbum(ctx context.Context, req *albumsv1.CreateAlbumRe
 	}
 
 	return nil, nil
+}
+
+func (s *serverAPI) AlbumsLight(ctx context.Context, req *albumsv1.AlbumsLightRequest) (*albumsv1.AlbumsLightResponse, error) {
+	s.log.Info("[AlbumsLight] grpc started")
+
+	ids, err := utils.StringsToIdsArray(req.Ids)
+	if err != nil {
+		s.log.Error("[AlbumsLight] grpc error: " + err.Error())
+		return nil, errors.New("[AlbumsLight] grpc error: " + err.Error())
+	}
+
+	albums, err := s.albums.AlbumsLight(ctx, ids)
+	if err != nil {
+		s.log.Error("[AlbumsLight] grpc error: " + err.Error())
+		return nil, errors.New("[AlbumsLight] grpc error: " + err.Error())
+	}
+
+	return models.AlbumsLightToGRPC(albums), nil
 }

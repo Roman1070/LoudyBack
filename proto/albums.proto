@@ -9,7 +9,16 @@ option go_package = "loudy.albumsv1;albumsv1";
 service Albums{
     rpc Album(AlbumRequest) returns (AlbumResponse);
     rpc AlbumLight(AlbumLightRequest) returns (AlbumLightResponse);
+    rpc AlbumsLight(AlbumsLightRequest) returns(AlbumsLightResponse);
     rpc CreateAlbum(CreateAlbumRequest) returns (google.protobuf.Empty){}
+}
+
+message AlbumsLightRequest{
+    repeated string ids=1;
+}
+
+message AlbumsLightResponse{
+    repeated AlbumLight albums=1;
 }
 
 message AlbumRequest{
@@ -40,13 +49,15 @@ message AlbumLightRequest{
     string id = 1;
 }
 
-message AlbumLightResponse{
+message AlbumLight{
     string id = 1;
     string name = 2;
     string cover = 3;
-    uint32 year = 4;
+    string release_date = 4;
 }
-
+message AlbumLightResponse{
+    AlbumLight album = 1;
+}
 message CreateAlbumRequest{
     string name = 1;
     repeated string artists_ids = 2;

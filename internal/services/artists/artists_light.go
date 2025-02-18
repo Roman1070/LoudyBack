@@ -8,10 +8,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (s *ArtistsService) Artists(ctx context.Context, ids []primitive.ObjectID) ([]models.Artist, error) {
+func (s *ArtistsService) ArtistsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.ArtistLight, error) {
 	s.log.Info("[Artists] service started")
 
-	artists, err := s.artists.Artists(ctx, ids)
+	artists, err := s.artists.ArtistsLight(ctx, ids)
 	if err != nil {
 		s.log.Error("[Artists] service error: " + err.Error())
 		return nil, errors.New("[Artists] service error: " + err.Error())

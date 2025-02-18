@@ -43,34 +43,49 @@ func (m *MockArtists) EXPECT() *MockArtistsMockRecorder {
 	return m.recorder
 }
 
-// Artist mocks base method.
-func (m *MockArtists) Artist(ctx context.Context, name string) (models.Artist, error) {
+// AddAlbum mocks base method.
+func (m *MockArtists) AddAlbum(ctx context.Context, artistsIds []primitive.ObjectID, albumId primitive.ObjectID) (*emptypb.Empty, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Artist", ctx, name)
+	ret := m.ctrl.Call(m, "AddAlbum", ctx, artistsIds, albumId)
+	ret0, _ := ret[0].(*emptypb.Empty)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddAlbum indicates an expected call of AddAlbum.
+func (mr *MockArtistsMockRecorder) AddAlbum(ctx, artistsIds, albumId any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddAlbum", reflect.TypeOf((*MockArtists)(nil).AddAlbum), ctx, artistsIds, albumId)
+}
+
+// Artist mocks base method.
+func (m *MockArtists) Artist(ctx context.Context, id string) (models.Artist, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Artist", ctx, id)
 	ret0, _ := ret[0].(models.Artist)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Artist indicates an expected call of Artist.
-func (mr *MockArtistsMockRecorder) Artist(ctx, name any) *gomock.Call {
+func (mr *MockArtistsMockRecorder) Artist(ctx, id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Artist", reflect.TypeOf((*MockArtists)(nil).Artist), ctx, name)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Artist", reflect.TypeOf((*MockArtists)(nil).Artist), ctx, id)
 }
 
-// Artists mocks base method.
-func (m *MockArtists) Artists(ctx context.Context, ids []primitive.ObjectID) ([]models.Artist, error) {
+// ArtistsLight mocks base method.
+func (m *MockArtists) ArtistsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.ArtistLight, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Artists", ctx, ids)
-	ret0, _ := ret[0].([]models.Artist)
+	ret := m.ctrl.Call(m, "ArtistsLight", ctx, ids)
+	ret0, _ := ret[0].([]models.ArtistLight)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Artists indicates an expected call of Artists.
-func (mr *MockArtistsMockRecorder) Artists(ctx, ids any) *gomock.Call {
+// ArtistsLight indicates an expected call of ArtistsLight.
+func (mr *MockArtistsMockRecorder) ArtistsLight(ctx, ids any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Artists", reflect.TypeOf((*MockArtists)(nil).Artists), ctx, ids)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ArtistsLight", reflect.TypeOf((*MockArtists)(nil).ArtistsLight), ctx, ids)
 }
 
 // CreateArtist mocks base method.
