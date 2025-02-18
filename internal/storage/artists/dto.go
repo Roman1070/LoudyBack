@@ -21,6 +21,7 @@ type dtoArtistLight struct {
 
 func (artist *dtoArtist) toCommonModel(albums []models.AlbumLight) models.Artist {
 	return models.Artist{
+		ID:         artist.ID,
 		Name:       artist.Name,
 		Cover:      artist.Cover,
 		Bio:        artist.Bio,
