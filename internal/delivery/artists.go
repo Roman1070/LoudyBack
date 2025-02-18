@@ -79,10 +79,21 @@ func (c *ArtistsClient) Artist(w http.ResponseWriter, r *http.Request) {
 	slog.Info("[Artist] client started")
 
 	id := r.URL.Query().Get("id")
+	name := r.URL.Query().Get("name")
 
-	artist, err := c.ArtistsGRPCClient.Artist(r.Context(), &artistsv1.ArtistRequest{
-		Id: id,
-	})
+	var artist interface{}
+	var err error
+	if len(name) == 0 {
+		artist, err = c.ArtistsGRPCClient.Artist(r.Context(), &artistsv1.ArtistRequest{
+			Id: id,
+		})
+
+	} else {
+		artist, err = c.ArtistsGRPCClient.ArtistByName(r.Context(), &artistsv1.ArtistByNameRequest{
+			Name: name,
+		})
+	}
+
 	if err != nil {
 		slog.Error("[Artist] client error: " + err.Error())
 		utils.WriteError(w, "Internal error")

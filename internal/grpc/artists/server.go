@@ -15,7 +15,9 @@ import (
 
 type Artists interface {
 	Artist(ctx context.Context, id primitive.ObjectID) (models.Artist, error)
+	ArtistByName(ctx context.Context, name string) (models.Artist, error)
 	ArtistsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.ArtistLight, error)
+	ArtistLightByName(ctx context.Context, name string) (models.ArtistLight, error)
 	CreateArtist(ctx context.Context, name, cover, bio string) (*emptypb.Empty, error)
 	AddAlbum(ctx context.Context, artistId []primitive.ObjectID, albumId primitive.ObjectID) (*emptypb.Empty, error)
 }
@@ -68,6 +70,35 @@ func (s *serverAPI) Artist(ctx context.Context, req *artistsv1.ArtistRequest) (*
 	}
 
 	return artist.ToGRPC(), nil
+}
+func (s *serverAPI) ArtistByName(ctx context.Context, req *artistsv1.ArtistByNameRequest) (*artistsv1.ArtistByNameResponse, error) {
+	s.log.Info("[ArtistByName] grpc started")
+
+	artist, err := s.artists.ArtistByName(ctx, req.Name)
+	if err != nil {
+		s.log.Error("[Artist] grpc error: " + err.Error())
+		return nil, fmt.Errorf("%s", "[Artist] grpc error: "+err.Error())
+	}
+
+	return &artistsv1.ArtistByNameResponse{
+		Artist: artist.ToGRPC().Artist,
+	}, nil
+}
+func (s *serverAPI) ArtistLightByName(ctx context.Context, req *artistsv1.ArtistLightByNameRequest) (*artistsv1.ArtistLightByNameResponse, error) {
+	s.log.Info("[ArtistLightByName] grpc started")
+
+	artist, err := s.artists.ArtistLightByName(ctx, req.Name)
+	if err != nil {
+		s.log.Error("[ArtistLightByName] grpc error: " + err.Error())
+		return nil, fmt.Errorf("%s", "[ArtistLightByName] grpc error: "+err.Error())
+	}
+
+	return &artistsv1.ArtistLightByNameResponse{
+		Artist: &artistsv1.ArtistLight{
+			Id:   artist.ID.Hex(),
+			Name: artist.Name,
+		},
+	}, nil
 }
 func (s *serverAPI) ArtistsLight(ctx context.Context, req *artistsv1.ArtistsLightRequest) (*artistsv1.ArtistsLightResponse, error) {
 	s.log.Info("[ArtistsLight] grpc started")

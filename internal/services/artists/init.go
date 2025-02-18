@@ -18,6 +18,8 @@ type ArtistsService struct {
 
 type Artists interface {
 	Artist(ctx context.Context, id primitive.ObjectID) (models.Artist, error)
+	ArtistByName(ctx context.Context, name string) (models.Artist, error)
+	ArtistLightByName(ctx context.Context, name string) (models.ArtistLight, error)
 	ArtistsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.ArtistLight, error)
 	CreateArtist(ctx context.Context, name, cover, bio string) (*emptypb.Empty, error)
 	AddAlbum(ctx context.Context, artistsIds []primitive.ObjectID, albumId primitive.ObjectID) (*emptypb.Empty, error)

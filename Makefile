@@ -15,7 +15,7 @@ migrate:
 gen_auth_mock:
 	mockgen -source=F:\Roman\WEB\LoudyBack\internal\services\auth\auth.go -destination=F:\Roman\WEB\LoudyBack\internal\services\auth\mocks\mockgen.go
 gen_artists_mock:
-	mockgen -source=/home/roma/roma/LoudyBack/internal/services/artists/init.go -destination=/home/roma/roma/LoudyBack/internal/services/artists/mocks/mockgen.go
+	mockgen -source=F:\Roman\WEB\LoudyBack\internal\services\artists\init.go -destination=F:\Roman\WEB\LoudyBack\internal\services\artists\mocks\mockgen.go
 migrate_test:
 	go build ./cmd/migrator/main.go
 	go run ./cmd/migrator/main.go --storage_path=./storage/auth.db --migrations_path=./tests/migrations --migrations_table=migrations_test
