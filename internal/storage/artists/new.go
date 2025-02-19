@@ -1,23 +1,29 @@
 package artists
 
 import (
+	"context"
 	"log/slog"
-	albumsv1 "loudy-back/gen/go/albums"
+	models "loudy-back/internal/domain/models/albums"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type ArtistsStorage struct {
-	collection   *mongo.Collection
-	albumsClient albumsv1.AlbumsClient
-	log          *slog.Logger
+type AlbumsProvider interface {
+	AlbumsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.AlbumLight, error)
 }
 
-func NewStorage(db *mongo.Database, collectionName string, log *slog.Logger, albumsClient albumsv1.AlbumsClient) *ArtistsStorage {
+type ArtistsStorage struct {
+	collection     *mongo.Collection
+	albumsProvider AlbumsProvider
+	log            *slog.Logger
+}
+
+func NewStorage(db *mongo.Database, collectionName string, log *slog.Logger, albumsProvider AlbumsProvider) *ArtistsStorage {
 	storage := &ArtistsStorage{
-		collection:   db.Collection(collectionName),
-		albumsClient: albumsClient,
-		log:          log,
+		collection:     db.Collection(collectionName),
+		albumsProvider: albumsProvider,
+		log:            log,
 	}
 
 	return storage

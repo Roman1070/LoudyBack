@@ -16,20 +16,19 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-type Albums interface {
-	Album(ctx context.Context, id primitive.ObjectID) (models.Album, error)
-	CreateAlbum(ctx context.Context, name, cover string, releaseDate string, artistsIds []primitive.ObjectID) (*emptypb.Empty, error)
+type AlbumsProvider interface {
+	AlbumsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.AlbumLight, error)
 }
 
 type AlbumsClient struct {
 	log              *slog.Logger
+	albumsProvider   AlbumsProvider
 	AlbumsGRPCClient albumsv1.AlbumsClient
 }
 
-func NewAlbumsClient(addr string, timeout time.Duration, retriesCount int, log *slog.Logger) (*AlbumsClient, error) {
+func NewAlbumsClient(addr string, timeout time.Duration, retriesCount int, log *slog.Logger, albumsProvider AlbumsProvider) (*AlbumsClient, error) {
 	retryOptions := []grpcretry.CallOption{
 		grpcretry.WithCodes(codes.NotFound, codes.Aborted, codes.DeadlineExceeded),
 		grpcretry.WithMax(uint(retriesCount)),
@@ -47,6 +46,7 @@ func NewAlbumsClient(addr string, timeout time.Duration, retriesCount int, log *
 
 	return &AlbumsClient{
 		log:              log,
+		albumsProvider:   albumsProvider,
 		AlbumsGRPCClient: albumsv1.NewAlbumsClient(cc),
 	}, nil
 }

@@ -1,6 +1,7 @@
 package artists
 
 import (
+	modelsAlbums "loudy-back/internal/domain/models/albums"
 	models "loudy-back/internal/domain/models/artists"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -19,14 +20,24 @@ type dtoArtistLight struct {
 	Name string             `bson:"name"`
 }
 
-func (artist *dtoArtist) toCommonModel(albums []models.AlbumLight) models.Artist {
+func (artist *dtoArtist) toCommonModel(albums []modelsAlbums.AlbumLight) models.Artist {
+	albumsInResult := make([]models.AlbumLight, len(albums))
+
+	for i, album := range albums {
+		albumsInResult[i] = models.AlbumLight{
+			ID:          album.ID,
+			Name:        album.Name,
+			Cover:       album.Cover,
+			ReleaseDate: album.ReleaseDate,
+		}
+	}
 	return models.Artist{
 		ID:         artist.ID,
 		Name:       artist.Name,
 		Cover:      artist.Cover,
 		Bio:        artist.Bio,
 		LikesCount: uint32(artist.LikesCount),
-		Albums:     albums,
+		Albums:     albumsInResult,
 	}
 }
 

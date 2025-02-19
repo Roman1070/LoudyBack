@@ -2,9 +2,12 @@ package main
 
 import (
 	common "loudy-back/cmd"
+	mongo_db "loudy-back/configs/mongo"
 	albumsv1 "loudy-back/gen/go/albums"
+	artistsv1 "loudy-back/gen/go/artists"
 	appArtists "loudy-back/internal/app/artists"
 	"loudy-back/internal/config"
+	repositoryAlbums "loudy-back/internal/storage/albums"
 	"os"
 	"os/signal"
 	"syscall"
@@ -27,7 +30,23 @@ func main() {
 
 	albumsClient := albumsv1.NewAlbumsClient(cc)
 
-	artistsApp, err := appArtists.New(log, cfg.GRPC.Artists.Port, albumsClient)
+	cc, err = grpc.NewClient(common.GrpcAlbumsAddress(cfg),
+		grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithChainUnaryInterceptor())
+
+	if err != nil {
+		panic(err)
+	}
+
+	artistsClient := artistsv1.NewArtistsClient(cc)
+
+	mongoDb, err := mongo_db.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	albumsRepo := repositoryAlbums.NewStorage(mongoDb, "albums", artistsClient, log)
+
+	artistsApp, err := appArtists.New(log, cfg.GRPC.Artists.Port, albumsClient, albumsRepo)
 	if err != nil {
 		panic(err)
 	}

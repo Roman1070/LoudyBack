@@ -1,45 +1,36 @@
 syntax = "proto3";
 
-import "google/protobuf/empty.proto";
 package albums;
 
 
 option go_package = "loudy.albumsv1;albumsv1";
 
 service Albums{
-    rpc Album(AlbumRequest) returns (AlbumResponse);
-    rpc AlbumLight(AlbumLightRequest) returns (AlbumLightResponse);
-    rpc AlbumsLight(AlbumsLightRequest) returns(AlbumsLightResponse);
     rpc CreateAlbum(CreateAlbumRequest) returns (CreateAlbumResponse);
+    rpc Album(AlbumRequest) returns (AlbumResponse);
+}
+message AlbumRequest{
+    string id = 1;
+}
+message AlbumResponse{
+    AlbumData album = 1;
+}
+message AlbumData{
+    string id = 1;
+    string name = 2;
+    string cover = 3;
+    string release_date = 4;
+    repeated ArtistLight artsits = 5;
+    repeated TrackLight tracks = 6;
 }
 message CreateAlbumResponse{
     string id = 1;
 }
-message AlbumsLightRequest{
-    repeated string ids=1;
-}
-
-message AlbumsLightResponse{
-    repeated AlbumLight albums=1;
-}
-
-message AlbumRequest{
-    string id=1;
-}
-
-message AlbumResponse{
-    string id = 1;
-    string name = 2;
+message CreateAlbumRequest{
+    string name = 1;
+    repeated string artists_ids = 2;
     string cover = 3;
-    repeated ArtistLight artists = 4;
-    repeated TrackLight tracks = 5;
-    string release_date = 6;
-}
-
-message TrackLight{
-    string id = 1;
-    string name = 2;
-    uint32 duration = 3;
+    string release_date = 4;
 }
 
 message ArtistLight{
@@ -47,22 +38,7 @@ message ArtistLight{
     string name = 2;
 }
 
-message AlbumLightRequest{
-    string id = 1;
-}
-
-message AlbumLight{
+message TrackLight{
     string id = 1;
     string name = 2;
-    string cover = 3;
-    string release_date = 4;
-}
-message AlbumLightResponse{
-    AlbumLight album = 1;
-}
-message CreateAlbumRequest{
-    string name = 1;
-    repeated string artists_ids = 2;
-    string cover = 3;
-    string release_date = 4;
 }

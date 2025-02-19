@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log/slog"
 	models "loudy-back/internal/domain/models/albums"
-	trackModels "loudy-back/internal/domain/models/tracks"
 	"loudy-back/internal/storage"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,7 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (c *AlbumsStorage) Album(ctx context.Context, id primitive.ObjectID) (models.Album, error) {
+func (c *AlbumsStorage) Album(ctx context.Context, id primitive.ObjectID) (models.AlbumPreliminary, error) {
 	c.log.Info("[Album] storage started")
 
 	filter := bson.M{"_id": id}
@@ -24,19 +23,13 @@ func (c *AlbumsStorage) Album(ctx context.Context, id primitive.ObjectID) (model
 	err := c.collection.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return models.Album{}, storage.ErrAlbumNotFound
+			return models.AlbumPreliminary{}, storage.ErrAlbumNotFound
 		}
 
 		slog.Error("[Album] storage error: " + err.Error())
-		return models.Album{}, errors.New("[Album] storage error: " + err.Error())
-	}
-
-	artists, err := c.artistsProvider.ArtistsLight(ctx, result.ArtistsIds)
-	if err != nil {
-		slog.Error("[Album] storage error: " + err.Error())
-		return models.Album{}, errors.New("[Album] storage error: " + err.Error())
+		return models.AlbumPreliminary{}, errors.New("[Album] storage error: " + err.Error())
 	}
 
 	c.log.Info("[Album] storage finished, result: " + fmt.Sprint(result))
-	return result.toCommonModel(artists, []trackModels.TrackLight{}), nil
+	return result.toCommonModel(), nil
 }

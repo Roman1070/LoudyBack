@@ -4,9 +4,10 @@ import (
 	"fmt"
 	common "loudy-back/cmd"
 	mongo_db "loudy-back/configs/mongo"
-	albumsv1 "loudy-back/gen/go/albums"
+	artistsv1 "loudy-back/gen/go/artists"
 	"loudy-back/internal/config"
 	"loudy-back/internal/middlewares"
+	repositoryAlbums "loudy-back/internal/storage/albums"
 	repositoryArtists "loudy-back/internal/storage/artists"
 	"net/http"
 	"os"
@@ -27,19 +28,21 @@ func main() {
 	cfg := config.MustLoad()
 	log := common.SetupLogger(cfg.Env)
 
-	cc, err := grpc.NewClient(common.GrpcAlbumsAddress(cfg),
+	cc, err := grpc.NewClient(common.GrpcArtistsAddress(cfg),
 		grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithChainUnaryInterceptor())
-
 	if err != nil {
 		panic(err)
 	}
 
-	albumsGRPCClient := albumsv1.NewAlbumsClient(cc)
+	artistsGRPCClient := artistsv1.NewArtistsClient(cc)
+
 	mongoDb, err := mongo_db.Connect()
 	if err != nil {
 		return
 	}
-	repo := repositoryArtists.NewStorage(mongoDb, "artists", log, albumsGRPCClient)
+
+	albumsRepo := repositoryAlbums.NewStorage(mongoDb, "albums", artistsGRPCClient, log)
+	artistsRepo := repositoryArtists.NewStorage(mongoDb, "artists", log, albumsRepo)
 
 	// postgreStorage, err := postgre.New()
 	// if err != nil {
@@ -47,8 +50,8 @@ func main() {
 	// }
 
 	authClient, _ := NewAuthClient(common.GrpcAuthAddress(cfg), cfg.Clients.Auth.Timeout, cfg.Clients.Auth.RetriesCount)
-	artistsClient, _ := NewArtistsClient(common.GrpcArtistsAddress(cfg), cfg.Clients.Artists.Timeout, cfg.Clients.Artists.RetriesCount, repo)
-	albumsClient, _ := NewAlbumsClient(common.GrpcAlbumsAddress(cfg), cfg.Clients.Albums.Timeout, cfg.Clients.Albums.RetriesCount, log)
+	artistsClient, _ := NewArtistsClient(common.GrpcArtistsAddress(cfg), cfg.Clients.Artists.Timeout, cfg.Clients.Artists.RetriesCount, artistsRepo)
+	albumsClient, _ := NewAlbumsClient(common.GrpcAlbumsAddress(cfg), cfg.Clients.Albums.Timeout, cfg.Clients.Albums.RetriesCount, log, albumsRepo)
 
 	router := mux.NewRouter()
 
