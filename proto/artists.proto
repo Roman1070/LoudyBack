@@ -7,65 +7,15 @@ package artists;
 option go_package = "loudy.artists.v1;artistsv1";
 
 service Artists{
-    rpc Artist(ArtistRequest) returns (ArtistResponse); 
-    rpc ArtistByName(ArtistByNameRequest) returns (ArtistByNameResponse); 
-    rpc ArtistLightByName(ArtistLightByNameRequest) returns (ArtistLightByNameResponse);
-    rpc ArtistsLight(ArtistsLightRequest) returns (ArtistsLightResponse);
     rpc CreateArtist(CreateArtistRequest) returns (google.protobuf.Empty){}
     rpc AddAlbum(AddAlbumRequest) returns (google.protobuf.Empty){}
 }
-message ArtistByNameRequest{
-    string name = 1;
-}
 
-message ArtistByNameResponse{
-    ArtistData artist = 1;
-}
-
-message ArtistLightByNameRequest{
-    string name = 1;
-}
-message ArtistLightByNameResponse{
-    ArtistLight artist = 1;
-}
 message AddAlbumRequest{
     repeated string artists_ids=1;
     string album_id=2;
 }
 
-message ArtistsLightRequest{
-    repeated string ids = 1;
-}
-
-message ArtistsLightResponse{
-    repeated ArtistLight artists = 1;
-}
-
-message ArtistRequest{
-    string id = 1;
-}
-
-message ArtistResponse{
-    ArtistData artist=1;
-}
-message ArtistLight{
-    string id = 1;
-    string name = 2;
-}
-message ArtistData{
-    string id = 1;
-    string name = 2;
-    string bio = 3;
-    string cover = 4;
-    uint32 likes_count=5;
-    repeated AlbumLight albums=6;
-}
-message AlbumLight{
-    string id = 1;
-    string name = 2;
-    string cover = 3;
-    string release_date = 4;
-}
 message CreateArtistRequest{
     string name = 1;
     string cover = 2;

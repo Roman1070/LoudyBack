@@ -14,22 +14,25 @@ import (
 	"time"
 
 	grpcretry "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/retry"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-type ArtistsProvider interface {
-	Artist(ctx context.Context, name string) (models.Artist, error)
-	CreateArtist(ctx context.Context, name, bio, cover string) (*emptypb.Empty, error)
-}
-
 type ArtistsClient struct {
+	artistsProvider   ArtistProvider
 	ArtistsGRPCClient artistsv1.ArtistsClient
 }
 
-func NewArtistsClient(addr string, timeout time.Duration, retriesCount int) (*ArtistsClient, error) {
+type ArtistProvider interface {
+	Artist(ctx context.Context, id primitive.ObjectID) (models.Artist, error)
+	ArtistsLight(ctx context.Context, id []primitive.ObjectID) ([]models.ArtistLight, error)
+	ArtistByName(ctx context.Context, name string) (models.Artist, error)
+	ArtistLightByName(ctx context.Context, name string) (models.ArtistLight, error)
+}
+
+func NewArtistsClient(addr string, timeout time.Duration, retriesCount int, artistsProvider ArtistProvider) (*ArtistsClient, error) {
 	retryOptions := []grpcretry.CallOption{
 		grpcretry.WithCodes(codes.NotFound, codes.Aborted, codes.DeadlineExceeded),
 		grpcretry.WithMax(uint(retriesCount)),
@@ -45,6 +48,7 @@ func NewArtistsClient(addr string, timeout time.Duration, retriesCount int) (*Ar
 	}
 
 	return &ArtistsClient{
+		artistsProvider:   artistsProvider,
 		ArtistsGRPCClient: artistsv1.NewArtistsClient(cc),
 	}, nil
 }
@@ -78,20 +82,23 @@ func (c *ArtistsClient) CreateArtist(w http.ResponseWriter, r *http.Request) {
 func (c *ArtistsClient) Artist(w http.ResponseWriter, r *http.Request) {
 	slog.Info("[Artist] client started")
 
-	id := r.URL.Query().Get("id")
+	idStr := r.URL.Query().Get("id")
 	name := r.URL.Query().Get("name")
 
 	var artist interface{}
 	var err error
 	if len(name) == 0 {
-		artist, err = c.ArtistsGRPCClient.Artist(r.Context(), &artistsv1.ArtistRequest{
-			Id: id,
-		})
+		var id primitive.ObjectID
+		id, err = primitive.ObjectIDFromHex(idStr)
+		if err != nil {
+			slog.Error("[Artist] client error: " + err.Error())
+			utils.WriteError(w, "Internal error")
+			return
+		}
+		artist, err = c.artistsProvider.Artist(r.Context(), id)
 
 	} else {
-		artist, err = c.ArtistsGRPCClient.ArtistByName(r.Context(), &artistsv1.ArtistByNameRequest{
-			Name: name,
-		})
+		artist, err = c.artistsProvider.ArtistByName(r.Context(), name)
 	}
 
 	if err != nil {

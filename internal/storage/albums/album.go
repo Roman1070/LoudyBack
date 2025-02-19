@@ -5,12 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	artistsv1 "loudy-back/gen/go/artists"
 	models "loudy-back/internal/domain/models/albums"
-	artistsModels "loudy-back/internal/domain/models/artists"
 	trackModels "loudy-back/internal/domain/models/tracks"
 	"loudy-back/internal/storage"
-	"loudy-back/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -34,21 +31,12 @@ func (c *AlbumsStorage) Album(ctx context.Context, id primitive.ObjectID) (model
 		return models.Album{}, errors.New("[Album] storage error: " + err.Error())
 	}
 
-	artists, err := c.artistsClient.ArtistsLight(ctx, &artistsv1.ArtistsLightRequest{
-		Ids: utils.IdsToStringArray(result.ArtistsIds),
-	})
-
-	if err != nil {
-		slog.Error("[Album] storage error: " + err.Error())
-		return models.Album{}, errors.New("[Album] storage error: " + err.Error())
-	}
-
-	artistsModels, err := artistsModels.ModelsFromArtistDataLight(artists.Artists)
+	artists, err := c.artistsProvider.ArtistsLight(ctx, result.ArtistsIds)
 	if err != nil {
 		slog.Error("[Album] storage error: " + err.Error())
 		return models.Album{}, errors.New("[Album] storage error: " + err.Error())
 	}
 
 	c.log.Info("[Album] storage finished, result: " + fmt.Sprint(result))
-	return result.toCommonModel(artistsModels, []trackModels.TrackLight{}), nil
+	return result.toCommonModel(artists, []trackModels.TrackLight{}), nil
 }

@@ -17,8 +17,9 @@ type dtoAlbum struct {
 	TracksIds   []primitive.ObjectID `bson:"tracks_ids"`
 }
 type dtoAlbumLight struct {
-	ID   primitive.ObjectID `bson:"_id"`
-	Name string             `bson:"name"`
+	ID          primitive.ObjectID `bson:"_id"`
+	Name        string             `bson:"name"`
+	ReleaseDate string             `bson:"release_date"`
 }
 
 func (a *dtoAlbum) toCommonModel(artists []artistModels.ArtistLight, tracks []trackModels.TrackLight) models.Album {
@@ -36,8 +37,9 @@ func toCommonModels(albums []dtoAlbumLight) []models.AlbumLight {
 
 	for i, album := range albums {
 		result[i] = models.AlbumLight{
-			ID:   album.ID,
-			Name: album.Name,
+			ID:          album.ID,
+			Name:        album.Name,
+			ReleaseDate: album.ReleaseDate,
 		}
 	}
 

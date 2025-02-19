@@ -19,6 +19,7 @@ func New(
 	log *slog.Logger,
 	grpcPort int,
 	artistsClient artistsv1.ArtistsClient,
+	artistsProvider repositoryAlbums.ArtistsProvider,
 ) (*App, error) {
 
 	mongoDb, err := mongo_db.Connect()
@@ -26,7 +27,7 @@ func New(
 		return nil, fmt.Errorf("[ ERROR ] не инициализируется монго %v", err)
 	}
 
-	repo := repositoryAlbums.NewStorage(mongoDb, "albums", artistsClient, log)
+	repo := repositoryAlbums.NewStorage(mongoDb, "albums", artistsClient, artistsProvider, log)
 
 	albumsService := albums.New(log, artistsClient, repo)
 

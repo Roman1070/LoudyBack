@@ -4,7 +4,6 @@ import (
 	"context"
 	"log/slog"
 	albumsv1 "loudy-back/gen/go/albums"
-	models "loudy-back/internal/domain/models/artists"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -17,10 +16,6 @@ type ArtistsService struct {
 }
 
 type Artists interface {
-	Artist(ctx context.Context, id primitive.ObjectID) (models.Artist, error)
-	ArtistByName(ctx context.Context, name string) (models.Artist, error)
-	ArtistLightByName(ctx context.Context, name string) (models.ArtistLight, error)
-	ArtistsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.ArtistLight, error)
 	CreateArtist(ctx context.Context, name, cover, bio string) (*emptypb.Empty, error)
 	AddAlbum(ctx context.Context, artistsIds []primitive.ObjectID, albumId primitive.ObjectID) (*emptypb.Empty, error)
 }

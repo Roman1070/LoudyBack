@@ -3,12 +3,17 @@ package main
 import (
 	"fmt"
 	common "loudy-back/cmd"
+	mongo_db "loudy-back/configs/mongo"
+	albumsv1 "loudy-back/gen/go/albums"
 	"loudy-back/internal/config"
 	"loudy-back/internal/middlewares"
+	repositoryArtists "loudy-back/internal/storage/artists"
 	"net/http"
 	"os"
 
 	"github.com/gorilla/mux"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 var (
@@ -22,10 +27,19 @@ func main() {
 	cfg := config.MustLoad()
 	log := common.SetupLogger(cfg.Env)
 
-	// mongoDb, err := mongo_db.Connect()
-	// if err != nil {
-	// 	return
-	// }
+	cc, err := grpc.NewClient(common.GrpcAlbumsAddress(cfg),
+		grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithChainUnaryInterceptor())
+
+	if err != nil {
+		panic(err)
+	}
+
+	albumsGRPCClient := albumsv1.NewAlbumsClient(cc)
+	mongoDb, err := mongo_db.Connect()
+	if err != nil {
+		return
+	}
+	repo := repositoryArtists.NewStorage(mongoDb, "artists", log, albumsGRPCClient)
 
 	// postgreStorage, err := postgre.New()
 	// if err != nil {
@@ -33,7 +47,7 @@ func main() {
 	// }
 
 	authClient, _ := NewAuthClient(common.GrpcAuthAddress(cfg), cfg.Clients.Auth.Timeout, cfg.Clients.Auth.RetriesCount)
-	artistsClient, _ := NewArtistsClient(common.GrpcArtistsAddress(cfg), cfg.Clients.Artists.Timeout, cfg.Clients.Artists.RetriesCount)
+	artistsClient, _ := NewArtistsClient(common.GrpcArtistsAddress(cfg), cfg.Clients.Artists.Timeout, cfg.Clients.Artists.RetriesCount, repo)
 	albumsClient, _ := NewAlbumsClient(common.GrpcAlbumsAddress(cfg), cfg.Clients.Albums.Timeout, cfg.Clients.Albums.RetriesCount, log)
 
 	router := mux.NewRouter()
