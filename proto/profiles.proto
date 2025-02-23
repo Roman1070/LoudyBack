@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package profiles;
+
+option go_package = "loudy.profiles.v1;profilesv1";
+
+service Profiles{
+    rpc CreateProfile(CreateProfileRequest) returns (CreateProfileResponse);
+    rpc GetProfile(GetProfileRequest) returns (GetProfileResponse);
+}
+
+message CreateProfileRequest {
+    uint32 user_id = 1;
+    string username = 2;
+    string avatar = 3;
+    string bio = 4;
+}
+
+message CreateProfileResponse{
+    string id = 1;
+}
+
+message GetProfileRequest{
+    string id = 1;
+}
+
+message GetProfileResponse{
+    ProfileData profile = 1;
+}
+
+message ProfileData{
+    string id = 1;
+    string name = 2;
+    string avatar = 3;
+    string bio = 4;
+    uint32 likes_count = 5;
+    repeated TrackLight saved_tracks = 6;
+    repeated AlbumLight saved_albums = 7;
+    repeated ArtistLight saved_artists = 8;
+    repeated PlaylistLight saved_playlists = 9;
+}
+message TrackLight{
+    string id = 1;
+    string name = 2;
+    string artist_name=3;
+    string cover = 4;
+    string album_id = 5;
+}
+message AlbumLight{
+    string id = 1;
+    string name = 2;
+    string artist_name = 3;
+    string cover = 4;
+}
+message ArtistLight{
+    string id = 1;
+    string name = 2;
+    string cover = 3;
+}
+message PlaylistLight{
+    string id = 1;
+    string name = 2;
+    string cover = 3;
+}
