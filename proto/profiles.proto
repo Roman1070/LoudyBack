@@ -42,9 +42,10 @@ message ProfileData{
 message TrackLight{
     string id = 1;
     string name = 2;
-    string artist_name=3;
+    repeated ArtistLight artists=3;
     string cover = 4;
     string album_id = 5;
+    uint32 duration = 6;
 }
 message AlbumLight{
     string id = 1;
