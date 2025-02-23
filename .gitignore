@@ -25,3 +25,5 @@ go.work.sum
 .env
 
 gen/go/
+static/.minio.sys/buckets/.bloomcycle.bin/xl.meta
+static/.minio.sys/buckets/.usage.json/xl.meta
