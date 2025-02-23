@@ -6,7 +6,7 @@ option go_package = "loudy.profiles.v1;profilesv1";
 
 service Profiles{
     rpc CreateProfile(CreateProfileRequest) returns (CreateProfileResponse);
-    rpc GetProfile(GetProfileRequest) returns (GetProfileResponse);
+    rpc Profile(ProfileRequest) returns (ProfileResponse);
 }
 
 message CreateProfileRequest {
@@ -20,11 +20,11 @@ message CreateProfileResponse{
     string id = 1;
 }
 
-message GetProfileRequest{
+message ProfileRequest{
     string id = 1;
 }
 
-message GetProfileResponse{
+message ProfileResponse{
     ProfileData profile = 1;
 }
 

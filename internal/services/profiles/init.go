@@ -35,7 +35,7 @@ type TracksProvider interface {
 
 type Profiles interface {
 	CreateProfile(ctx context.Context, userId uint32, name, avatar, bio string) (id primitive.ObjectID, err error)
-	GetProfile(ctx context.Context, id primitive.ObjectID) (profile models.ProfilePreliminary, err error)
+	Profile(ctx context.Context, id primitive.ObjectID) (profile models.ProfilePreliminary, err error)
 }
 
 func New(log *slog.Logger, artists artistsv1.ArtistsClient, profiles Profiles, artistsProvider ArtistsProvider, albumsProvider AlbumsProvider, tracksProvider TracksProvider) *ProfilesService {

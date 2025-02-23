@@ -8,10 +8,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (s *ProfilesService) GetProfile(ctx context.Context, id primitive.ObjectID) (models.Profile, error) {
+func (s *ProfilesService) Profile(ctx context.Context, id primitive.ObjectID) (models.Profile, error) {
 	s.log.Info("[GetProfile] server started")
 
-	profile, err := s.profiles.GetProfile(ctx, id)
+	profile, err := s.profiles.Profile(ctx, id)
 	if err != nil {
 		s.log.Error("[GetProfile] service error: " + err.Error())
 		return models.Profile{}, errors.New("[GetProfile] service error: " + err.Error())

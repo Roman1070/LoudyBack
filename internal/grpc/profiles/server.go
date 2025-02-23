@@ -13,7 +13,7 @@ import (
 
 type Profiles interface {
 	CreateProfile(ctx context.Context, userId uint32, name, avatar, bio string) (id primitive.ObjectID, err error)
-	GetProfile(ctx context.Context, id primitive.ObjectID) (profile models.Profile, err error)
+	Profile(ctx context.Context, id primitive.ObjectID) (profile models.Profile, err error)
 }
 
 type serverAPI struct {
@@ -40,7 +40,7 @@ func (s *serverAPI) CreateProfile(ctx context.Context, req *profilesv1.CreatePro
 	}, nil
 }
 
-func (s *serverAPI) GetProfile(ctx context.Context, req *profilesv1.GetProfileRequest) (*profilesv1.GetProfileResponse, error) {
+func (s *serverAPI) GetProfile(ctx context.Context, req *profilesv1.ProfileRequest) (*profilesv1.ProfileResponse, error) {
 	s.log.Info("[GetProfile] grpc started")
 
 	id, err := primitive.ObjectIDFromHex(req.Id)
@@ -49,13 +49,13 @@ func (s *serverAPI) GetProfile(ctx context.Context, req *profilesv1.GetProfileRe
 		return nil, errors.New("[GetProfile] grpc error: " + err.Error())
 	}
 
-	profile, err := s.profiles.GetProfile(ctx, id)
+	profile, err := s.profiles.Profile(ctx, id)
 	if err != nil {
 		s.log.Error("[GetProfile] grpc error: " + err.Error())
 		return nil, errors.New("[GetProfile] grpc error: " + err.Error())
 	}
 
-	return &profilesv1.GetProfileResponse{
+	return &profilesv1.ProfileResponse{
 		Profile: profile.ToGRPC(),
 	}, nil
 }

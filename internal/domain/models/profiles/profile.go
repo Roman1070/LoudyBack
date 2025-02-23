@@ -12,6 +12,7 @@ import (
 
 type Profile struct {
 	ID             primitive.ObjectID
+	UserId         uint32
 	Name           string
 	Avatar         string
 	Bio            string
@@ -23,6 +24,7 @@ type Profile struct {
 }
 type ProfilePreliminary struct {
 	ID                primitive.ObjectID
+	UserId            uint32
 	Name              string
 	Avatar            string
 	Bio               string
@@ -51,6 +53,25 @@ func (p *Profile) ToGRPC() *profilesv1.ProfileData {
 			Cover:    track.Cover,
 			AlbumId:  track.AlbumID.Hex(),
 			Duration: uint32(track.Duration),
+		}
+	}
+
+	artists := make([]profilesv1.ArtistLight, len(p.SavedArtists))
+
+	for i, artist := range p.SavedArtists {
+		artists[i] = profilesv1.ArtistLight{
+			Id:    artist.ID.Hex(),
+			Name:  artist.Name,
+			Cover: artist.Cover,
+		}
+	}
+
+	albums := make([]profilesv1.AlbumLight, len(p.SavedAlbums))
+
+	for i, album := range p.SavedAlbums {
+		albums[i] = profilesv1.AlbumLight{
+			Id:   album.ID.Hex(),
+			Name: album.Name,
 		}
 	}
 
