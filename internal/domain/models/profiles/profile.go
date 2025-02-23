@@ -21,6 +21,17 @@ type Profile struct {
 	SavedArtists   []artistsModels.ArtistLight
 	SavedPlaylists []playlistModels.PlaylistLight
 }
+type ProfilePreliminary struct {
+	ID                primitive.ObjectID
+	Name              string
+	Avatar            string
+	Bio               string
+	LikesCount        uint32
+	SavedTracksIds    []primitive.ObjectID
+	SavedAlbumsIds    []primitive.ObjectID
+	SavedArtistsIds   []primitive.ObjectID
+	SavedPlaylistsIds []primitive.ObjectID
+}
 
 func (p *Profile) ToGRPC() *profilesv1.ProfileData {
 	tracks := make([]profilesv1.TrackLight, len(p.SavedTracks))
