@@ -2,6 +2,7 @@ package minio
 
 import (
 	"context"
+	"errors"
 
 	"github.com/minio/minio-go/v7"
 )
@@ -19,7 +20,7 @@ type StaticStorage struct {
 func NewStaticStorage(ctx context.Context, minioClient *minio.Client, bucketName string) (storage *StaticStorage, err error) {
 	bucketExists, err := minioClient.BucketExists(ctx, bucketName)
 	if err != nil {
-		return
+		return nil, errors.New("[NewStaticStorage] minio error: " + err.Error())
 	}
 
 	if !bucketExists {
@@ -27,7 +28,7 @@ func NewStaticStorage(ctx context.Context, minioClient *minio.Client, bucketName
 			Region: "ru-central1",
 		})
 		if err != nil {
-			return
+			return nil, errors.New("[NewStaticStorage] minio error: " + err.Error())
 		}
 
 		policy := `{
@@ -45,7 +46,7 @@ func NewStaticStorage(ctx context.Context, minioClient *minio.Client, bucketName
 
 		err = minioClient.SetBucketPolicy(ctx, bucketName, policy)
 		if err != nil {
-			return
+			return nil, errors.New("[NewStaticStorage] minio error: " + err.Error())
 		}
 	}
 
@@ -53,7 +54,7 @@ func NewStaticStorage(ctx context.Context, minioClient *minio.Client, bucketName
 		bucketName:  bucketName,
 		MinioClient: minioClient,
 	}
-	return
+	return storage, nil
 }
 
 func (a *StaticStorage) Store(ctx context.Context, fileName string, filePath string, contentType string) (err error) {
@@ -61,17 +62,17 @@ func (a *StaticStorage) Store(ctx context.Context, fileName string, filePath str
 		ContentType: contentType,
 	})
 	if err != nil {
-		return
+		return errors.New("[Store] minio error: " + err.Error())
 	}
 
-	return
+	return nil
 }
 
 func (a *StaticStorage) Delete(ctx context.Context, fileName string) (err error) {
 	err = a.MinioClient.RemoveObject(ctx, a.bucketName, fileName, minio.RemoveObjectOptions{})
 	if err != nil {
-		return
+		return errors.New("[Delete] minio error: " + err.Error())
 	}
 
-	return
+	return nil
 }

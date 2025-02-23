@@ -30,21 +30,21 @@ services:
       - mongo_db
 
   albums_go:
-      build:
-        context: .
-        dockerfile: ./cmd/albums/Dockerfile
-      ports:
-        - "44002:44002"
-      image: albums-go-image
-      container_name: albums-go
-      restart: unless-stopped
-      networks:
-        - app-network
-      volumes:
-        - ./files:/app/files
-      depends_on:
-        - mongo_db
-        - artists_go
+    build:
+      context: .
+      dockerfile: ./cmd/albums/Dockerfile
+    ports:
+      - "44002:44002"
+    image: albums-go-image
+    container_name: albums-go
+    restart: unless-stopped
+    networks:
+      - app-network
+    volumes:
+      - ./files:/app/files
+    depends_on:
+      - mongo_db
+      - artists_go
 
   clients_go:
     build:
@@ -59,6 +59,8 @@ services:
       - app-network
     volumes:
       - ./files:/app/files
+    depends_on:
+      - minio
 
   pg_db:
     image: postgres:16.4
@@ -77,6 +79,16 @@ services:
     restart: unless-stopped
     networks:
       - app-network
+  minio:
+    image: minio/minio:RELEASE.2025-02-18T16-25-55Z
+    volumes:
+      - ./static/:/data/
+    ports:
+      - 9000:9000
+    command: server /data
+    environment:
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
 
   mongo_db:
     image: mongo
@@ -88,7 +100,7 @@ services:
       #- MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
       - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
     ports:
-      - '27017:27017'
+      - "27017:27017"
     networks:
       - app-network
 
