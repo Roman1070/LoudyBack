@@ -36,7 +36,7 @@ type ProfilePreliminary struct {
 }
 
 func (p *Profile) ToGRPC() *profilesv1.ProfileData {
-	tracks := make([]profilesv1.TrackLight, len(p.SavedTracks))
+	tracks := make([]*profilesv1.TrackLight, len(p.SavedTracks))
 
 	for i, track := range p.SavedTracks {
 		artists := make([]*profilesv1.ArtistLight, len(track.Artists))
@@ -46,7 +46,7 @@ func (p *Profile) ToGRPC() *profilesv1.ProfileData {
 				Name: artist.Name,
 			}
 		}
-		tracks[i] = profilesv1.TrackLight{
+		tracks[i] = &profilesv1.TrackLight{
 			Id:       track.ID.Hex(),
 			Name:     track.Name,
 			Artists:  artists,
@@ -56,24 +56,33 @@ func (p *Profile) ToGRPC() *profilesv1.ProfileData {
 		}
 	}
 
-	artists := make([]profilesv1.ArtistLight, len(p.SavedArtists))
+	artists := make([]*profilesv1.ArtistLight, len(p.SavedArtists))
 
 	for i, artist := range p.SavedArtists {
-		artists[i] = profilesv1.ArtistLight{
+		artists[i] = &profilesv1.ArtistLight{
 			Id:    artist.ID.Hex(),
 			Name:  artist.Name,
 			Cover: artist.Cover,
 		}
 	}
 
-	albums := make([]profilesv1.AlbumLight, len(p.SavedAlbums))
+	albums := make([]*profilesv1.AlbumLight, len(p.SavedAlbums))
 
 	for i, album := range p.SavedAlbums {
-		albums[i] = profilesv1.AlbumLight{
+		albums[i] = &profilesv1.AlbumLight{
 			Id:   album.ID.Hex(),
 			Name: album.Name,
 		}
 	}
 
-	return &profilesv1.ProfileData{}
+	return &profilesv1.ProfileData{
+		Id:           p.ID.Hex(),
+		Name:         p.Name,
+		Avatar:       p.Avatar,
+		Bio:          p.Bio,
+		LikesCount:   p.LikesCount,
+		SavedAlbums:  albums,
+		SavedTracks:  tracks,
+		SavedArtists: artists,
+	}
 }

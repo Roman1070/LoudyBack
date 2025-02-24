@@ -15,6 +15,9 @@ import (
 func (s *AlbumsStorage) AlbumsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.AlbumLight, error) {
 	s.log.Info("[AlbumsLight] storage started")
 
+	if len(ids) == 0 {
+		return []models.AlbumLight{}, nil
+	}
 	query := bson.M{"_id": bson.M{"$in": ids}}
 
 	cursor, err := s.collection.Find(ctx, query)

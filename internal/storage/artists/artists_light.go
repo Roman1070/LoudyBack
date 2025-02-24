@@ -15,6 +15,9 @@ import (
 
 func (c *ArtistsStorage) ArtistsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.ArtistLight, error) {
 	c.log.Info("[ArtistsLight] storage started")
+	if len(ids) == 0 {
+		return []models.ArtistLight{}, nil
+	}
 
 	query := bson.M{"_id": bson.M{"$in": ids}}
 
