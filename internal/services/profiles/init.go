@@ -3,7 +3,6 @@ package profiles
 import (
 	"context"
 	"log/slog"
-	artistsv1 "loudy-back/gen/go/artists"
 	albumsModels "loudy-back/internal/domain/models/albums"
 	artistsModels "loudy-back/internal/domain/models/artists"
 	models "loudy-back/internal/domain/models/profiles"
@@ -15,7 +14,6 @@ import (
 type ProfilesService struct {
 	log             *slog.Logger
 	profiles        Profiles
-	artists         artistsv1.ArtistsClient
 	artistsProvider ArtistsProvider
 	albumsProvider  AlbumsProvider
 	tracksProvider  TracksProvider
@@ -38,13 +36,12 @@ type Profiles interface {
 	Profile(ctx context.Context, id primitive.ObjectID) (profile models.ProfilePreliminary, err error)
 }
 
-func New(log *slog.Logger, artists artistsv1.ArtistsClient, profiles Profiles, artistsProvider ArtistsProvider, albumsProvider AlbumsProvider, tracksProvider TracksProvider) *ProfilesService {
+func New(log *slog.Logger, profiles Profiles, artistsProvider ArtistsProvider, albumsProvider AlbumsProvider, tracksProvider TracksProvider) *ProfilesService {
 	return &ProfilesService{
 		profiles:        profiles,
 		log:             log,
 		artistsProvider: artistsProvider,
 		albumsProvider:  albumsProvider,
 		tracksProvider:  tracksProvider,
-		artists:         artists,
 	}
 }

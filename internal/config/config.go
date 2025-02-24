@@ -24,14 +24,16 @@ type Client struct {
 	Insecure     string        `yaml:"incesure"`
 }
 type ClientsConfig struct {
-	Auth    Client `yaml:"auth"`
-	Artists Client `yaml:"artists"`
-	Albums  Client `yaml:"albums"`
+	Auth     Client `yaml:"auth"`
+	Artists  Client `yaml:"artists"`
+	Albums   Client `yaml:"albums"`
+	Profiles Client `yaml:"profiles"`
 }
 type GRPCConfig struct {
-	Auth    MicroserviceGRPCConfig `yaml:"auth"`
-	Artists MicroserviceGRPCConfig `yaml:"artists"`
-	Albums  MicroserviceGRPCConfig `yaml:"albums"`
+	Auth     MicroserviceGRPCConfig `yaml:"auth"`
+	Artists  MicroserviceGRPCConfig `yaml:"artists"`
+	Albums   MicroserviceGRPCConfig `yaml:"albums"`
+	Profiles MicroserviceGRPCConfig `yaml:"profiles"`
 }
 type MicroserviceGRPCConfig struct {
 	Port    int           `yaml:"port"`

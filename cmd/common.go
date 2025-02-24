@@ -56,3 +56,7 @@ func GrpcArtistsAddress(cfg *config.Config) string {
 func GrpcAlbumsAddress(cfg *config.Config) string {
 	return fmt.Sprintf("albums-go:%v", cfg.GRPC.Albums.Port)
 }
+
+func GrpcProfilesAddress(cfg *config.Config) string {
+	return fmt.Sprintf("profiles-go:%v", cfg.GRPC.Profiles.Port)
+}
