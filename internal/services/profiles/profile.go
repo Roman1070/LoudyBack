@@ -3,7 +3,6 @@ package profiles
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	albumsModels "loudy-back/internal/domain/models/albums"
 	artistsModels "loudy-back/internal/domain/models/artists"
@@ -31,32 +30,26 @@ func (s *ProfilesService) Profile(ctx context.Context, id primitive.ObjectID) (m
 
 	wg.Add(1)
 	go func(ctx context.Context, artistsProvider ArtistsProvider, ids []primitive.ObjectID, log *slog.Logger) {
-		log.Info("[Profile] go 2 started, provider = " + fmt.Sprint(artistsProvider) + " ids = " + fmt.Sprint(ids))
 		artistsLight, err := artistsProvider.ArtistsLight(ctx, ids)
 		if err != nil {
 			errorChan <- errors.New("[Profile] service error: " + err.Error())
 			return
 		}
-		s.log.Info("[Profile] go 1 pre-done")
 
 		artistsChan <- artistsLight
-		s.log.Info("[Profile] go 1 done")
 		wg.Done()
 
 	}(ctx, s.artistsProvider, profile.SavedArtistsIds, s.log)
 
 	wg.Add(1)
 	go func(ctx context.Context, albumsProvider AlbumsProvider, ids []primitive.ObjectID, log *slog.Logger) {
-		log.Info("[Profile] go 2 started, provider = " + fmt.Sprint(albumsProvider) + " ids = " + fmt.Sprint(ids))
 		albumsLight, err := albumsProvider.AlbumsLight(ctx, ids)
 		if err != nil {
 			errorChan <- errors.New("[Profile] service error: " + err.Error())
 			return
 		}
-		log.Info("[Profile] go 2 pre-done")
 
 		albumsChan <- albumsLight
-		log.Info("[Profile] go 2 done")
 		wg.Done()
 
 	}(ctx, s.albumsProvider, profile.SavedAlbumsIds, s.log)
