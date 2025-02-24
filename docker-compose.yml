@@ -40,11 +40,25 @@ services:
     restart: unless-stopped
     networks:
       - app-network
-    volumes:
-      - ./files:/app/files
     depends_on:
       - mongo_db
       - artists_go
+
+  profiles_go:
+    build:
+      context: .
+      dockerfile: ./cmd/profiles/Dockerfile
+    ports:
+      - "44003:44003"
+    image: profiles-go-image
+    container_name: profiles-go
+    restart: unless-stopped
+    networks:
+      - app-network
+    depends_on:
+      - mongo_db
+      - artists_go
+      - albums_go
 
   clients_go:
     build:

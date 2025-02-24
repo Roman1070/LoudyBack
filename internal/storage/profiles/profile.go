@@ -14,7 +14,7 @@ import (
 )
 
 func (s *ProfilesStorage) Profile(ctx context.Context, id primitive.ObjectID) (models.ProfilePreliminary, error) {
-	s.log.Info("[GetProfile] storage started")
+	s.log.Info("[Profile] storage started")
 
 	filter := bson.M{"_id": id}
 

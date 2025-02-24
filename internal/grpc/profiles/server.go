@@ -40,19 +40,19 @@ func (s *serverAPI) CreateProfile(ctx context.Context, req *profilesv1.CreatePro
 	}, nil
 }
 
-func (s *serverAPI) GetProfile(ctx context.Context, req *profilesv1.ProfileRequest) (*profilesv1.ProfileResponse, error) {
-	s.log.Info("[GetProfile] grpc started")
+func (s *serverAPI) Profile(ctx context.Context, req *profilesv1.ProfileRequest) (*profilesv1.ProfileResponse, error) {
+	s.log.Info("[Profile] grpc started")
 
 	id, err := primitive.ObjectIDFromHex(req.Id)
 	if err != nil {
-		s.log.Error("[GetProfile] grpc error: " + err.Error())
-		return nil, errors.New("[GetProfile] grpc error: " + err.Error())
+		s.log.Error("[Profile] grpc error: " + err.Error())
+		return nil, errors.New("[Profile] grpc error: " + err.Error())
 	}
 
 	profile, err := s.profiles.Profile(ctx, id)
 	if err != nil {
-		s.log.Error("[GetProfile] grpc error: " + err.Error())
-		return nil, errors.New("[GetProfile] grpc error: " + err.Error())
+		s.log.Error("[Profile] grpc error: " + err.Error())
+		return nil, errors.New("[Profile] grpc error: " + err.Error())
 	}
 
 	return &profilesv1.ProfileResponse{
