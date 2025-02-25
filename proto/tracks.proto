@@ -47,5 +47,5 @@ message TracksRequest{
 }
 
 message TracksResponse{
-    repeated TrackData tracls = 1;
+    repeated TrackData tracks = 1;
 }
