@@ -15,6 +15,15 @@ type Track struct {
 	Duration uint16
 }
 
+type TrackPreliminary struct {
+	ID         primitive.ObjectID
+	Name       string
+	AlbumID    primitive.ObjectID
+	Cover      string
+	ArtistsIds []primitive.ObjectID
+	Duration   uint16
+}
+
 type ArtistLight struct {
 	ID   primitive.ObjectID
 	Name string
