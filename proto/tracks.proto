@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package tracks;
+
+option go_package = "loudy.tracks.v1;tracksv1";
+
+service Tracks{
+    rpc CreateTrack(CreateTrackRequest) returns(CreateTrackResponse);
+    rpc Track(TrackRequest) returns (TrackResponse);
+    rpc Tracks(TracksRequest) returns (TracksResponse);
+}
+
+message CreateTrackRequest{
+    string name = 1;
+    string album_id = 2;
+    uint32 duration = 3;
+}
+
+message CreateTrackResponse{
+    string id = 1;
+}
+
+message TrackRequest{
+    string id = 1;
+}
+
+message TrackResponse{
+    TrackData track = 1;
+}
+
+message TrackData{
+    string id = 1;
+    string name = 2;
+    string album_id = 3;
+    string cover = 4;
+    uint32 duration = 5;
+    repeated ArtistLight artists = 6;
+}
+
+message ArtistLight{
+    string id = 1;
+    string name = 2;
+}
+
+message TracksRequest{
+    repeated string ids = 1;
+}
+
+message TracksResponse{
+    repeated TrackData tracls = 1;
+}

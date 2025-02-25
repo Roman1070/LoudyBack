@@ -8,6 +8,8 @@ gen_albums:
 	protoc -I proto proto/albums.proto --go_out=./gen/go/albums/ --go_opt=paths=source_relative --go-grpc_out=./gen/go/albums/ --go-grpc_opt=paths=source_relative
 gen_profiles:
 	protoc -I proto proto/profiles.proto --go_out=./gen/go/profiles/ --go_opt=paths=source_relative --go-grpc_out=./gen/go/profiles/ --go-grpc_opt=paths=source_relative
+gen_tracks:
+	protoc -I proto proto/tracks.proto --go_out=./gen/go/tracks/ --go_opt=paths=source_relative --go-grpc_out=./gen/go/tracks/ --go-grpc_opt=paths=source_relative
 auth:
 	go run cmd/auth/main.go
 
