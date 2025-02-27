@@ -23,11 +23,17 @@ func (s *TracksService) Track(ctx context.Context, id primitive.ObjectID) (model
 		return models.Track{}, errors.New("[Track] service error: " + err.Error())
 	}
 
+	album, err := s.albumsProvider.AlbumLight(ctx, trackPreliminary.AlbumID)
+	if err != nil {
+		s.log.Error("[Track] service error: " + err.Error())
+		return models.Track{}, errors.New("[Track] service error: " + err.Error())
+	}
+
 	return models.Track{
 		ID:       trackPreliminary.ID,
 		Name:     trackPreliminary.Name,
-		Cover:    trackPreliminary.Cover,
 		Duration: trackPreliminary.Duration,
+		Cover:    album.Cover,
 		AlbumID:  trackPreliminary.AlbumID,
 		Artists:  artists,
 	}, nil
