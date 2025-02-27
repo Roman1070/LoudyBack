@@ -28,6 +28,24 @@ services:
       - ./files:/app/files
     depends_on:
       - mongo_db
+      - albums_go
+
+  tracks_go:
+    build:
+      context: .
+      dockerfile: ./cmd/tracks/Dockerfile
+    ports:
+      - "44004:44004"
+    image: tracks-go-image
+    container_name: tracks-go
+    restart: unless-stopped
+    networks:
+      - app-network
+    volumes:
+      - ./files:/app/files
+    depends_on:
+      - mongo_db
+      - albums_go
 
   albums_go:
     build:
