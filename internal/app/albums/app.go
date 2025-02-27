@@ -20,6 +20,7 @@ func New(
 	grpcPort int,
 	artistsClient artistsv1.ArtistsClient,
 	artistsProvider albums.ArtistsProvider,
+	tracksProvider albums.TracksProvider,
 ) (*App, error) {
 
 	mongoDb, err := mongo_db.Connect()
@@ -29,7 +30,7 @@ func New(
 
 	repo := repositoryAlbums.NewStorage(mongoDb, "albums", artistsClient, log)
 
-	albumsService := albums.New(log, artistsClient, repo, artistsProvider)
+	albumsService := albums.New(log, artistsClient, repo, artistsProvider, tracksProvider)
 
 	grpcApp := grpcApp.New(log, albumsService, grpcPort)
 

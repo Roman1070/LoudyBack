@@ -8,6 +8,7 @@ import (
 	"loudy-back/internal/config"
 	repositoryAlbums "loudy-back/internal/storage/albums"
 	repositoryArtists "loudy-back/internal/storage/artists"
+	repositoryTracks "loudy-back/internal/storage/tracks"
 	"os"
 	"os/signal"
 	"syscall"
@@ -36,8 +37,9 @@ func main() {
 
 	albumsRepo := repositoryAlbums.NewStorage(mongoDb, "albums", artistsClient, log)
 	artistsRepo := repositoryArtists.NewStorage(mongoDb, "artists", log, albumsRepo)
+	tracksRepo := repositoryTracks.NewStorage(mongoDb, "tracks", log)
 
-	albumsApp, err := appAlbums.New(log, cfg.GRPC.Albums.Port, artistsClient, artistsRepo)
+	albumsApp, err := appAlbums.New(log, cfg.GRPC.Albums.Port, artistsClient, artistsRepo, tracksRepo)
 	if err != nil {
 		panic(err)
 	}
