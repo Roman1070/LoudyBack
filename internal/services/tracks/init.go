@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	albumModels "loudy-back/internal/domain/models/albums"
+	artistsModels "loudy-back/internal/domain/models/artists"
 	models "loudy-back/internal/domain/models/tracks"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -17,7 +18,7 @@ type TracksService struct {
 }
 
 type ArtistsProvider interface {
-	ArtistsLight(ctx context.Context, ids []primitive.ObjectID) ([]models.ArtistLight, error)
+	ArtistsLight(ctx context.Context, ids []primitive.ObjectID) ([]artistsModels.ArtistLight, error)
 }
 type AlbumsProvider interface {
 	AlbumLight(ctx context.Context, id primitive.ObjectID) (albumModels.AlbumLight, error)
@@ -29,10 +30,11 @@ type Tracks interface {
 	Tracks(ctx context.Context, ids []primitive.ObjectID) ([]models.TrackPreliminary, error)
 }
 
-func New(tracks Tracks, artistsProvider ArtistsProvider, log *slog.Logger) *TracksService {
+func New(tracks Tracks, artistsProvider ArtistsProvider, albumsProvider AlbumsProvider, log *slog.Logger) *TracksService {
 	return &TracksService{
 		tracks:          tracks,
 		artistsProvider: artistsProvider,
+		albumsProvider:  albumsProvider,
 		log:             log,
 	}
 }

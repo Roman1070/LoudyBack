@@ -28,12 +28,14 @@ type ClientsConfig struct {
 	Artists  Client `yaml:"artists"`
 	Albums   Client `yaml:"albums"`
 	Profiles Client `yaml:"profiles"`
+	Tracks   Client `yaml:"tracks"`
 }
 type GRPCConfig struct {
 	Auth     MicroserviceGRPCConfig `yaml:"auth"`
 	Artists  MicroserviceGRPCConfig `yaml:"artists"`
 	Albums   MicroserviceGRPCConfig `yaml:"albums"`
 	Profiles MicroserviceGRPCConfig `yaml:"profiles"`
+	Tracks   MicroserviceGRPCConfig `yaml:"tracks"`
 }
 type MicroserviceGRPCConfig struct {
 	Port    int           `yaml:"port"`

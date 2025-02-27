@@ -2,6 +2,7 @@ package models
 
 import (
 	tracksv1 "loudy-back/gen/go/tracks"
+	models "loudy-back/internal/domain/models/artists"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -11,7 +12,7 @@ type Track struct {
 	Name     string
 	AlbumID  primitive.ObjectID
 	Cover    string
-	Artists  []ArtistLight
+	Artists  []models.ArtistLight
 	Duration uint16
 }
 
@@ -21,11 +22,6 @@ type TrackPreliminary struct {
 	AlbumID    primitive.ObjectID
 	ArtistsIds []primitive.ObjectID
 	Duration   uint16
-}
-
-type ArtistLight struct {
-	ID   primitive.ObjectID
-	Name string
 }
 
 func (t *Track) ToGRPC() *tracksv1.TrackData {

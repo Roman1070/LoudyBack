@@ -18,6 +18,7 @@ type dtoAlbumLight struct {
 	ID          primitive.ObjectID `bson:"_id"`
 	Name        string             `bson:"name"`
 	ReleaseDate string             `bson:"release_date"`
+	Cover       string             `bson:"cover"`
 }
 
 func (a *dtoAlbum) toCommonModel() models.AlbumPreliminary {

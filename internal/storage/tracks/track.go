@@ -25,8 +25,8 @@ func (s *TracksStorage) Track(ctx context.Context, id primitive.ObjectID) (model
 			return models.TrackPreliminary{}, storage.ErrTrackNotFound
 		}
 
-		slog.Error("[Profile] storage error: " + err.Error())
-		return models.TrackPreliminary{}, errors.New("[Profile] storage error: " + err.Error())
+		slog.Error("[Track] storage error: " + err.Error())
+		return models.TrackPreliminary{}, errors.New("[Track] storage error: " + err.Error())
 	}
 
 	return models.TrackPreliminary{
