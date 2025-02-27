@@ -28,7 +28,6 @@ services:
       - ./files:/app/files
     depends_on:
       - mongo_db
-      - albums_go
 
   tracks_go:
     build:
