@@ -12,8 +12,11 @@ import (
 )
 
 type Profiles interface {
-	CreateProfile(ctx context.Context, userId uint32, name, avatar, bio string) (id primitive.ObjectID, err error)
-	Profile(ctx context.Context, id primitive.ObjectID) (profile models.Profile, err error)
+	CreateProfile(ctx context.Context, userId uint32, name, avatar, bio string) (primitive.ObjectID, error)
+	Profile(ctx context.Context, id primitive.ObjectID) (models.Profile, error)
+	ToggleLikeTrack(ctx context.Context, profileId primitive.ObjectID, trackId primitive.ObjectID) (bool, error)
+	ToggleLikeAlbum(ctx context.Context, profileId primitive.ObjectID, albumId primitive.ObjectID) (bool, error)
+	ToggleLikeArtist(ctx context.Context, profileId primitive.ObjectID, artistId primitive.ObjectID) (bool, error)
 }
 
 type serverAPI struct {
@@ -57,5 +60,83 @@ func (s *serverAPI) Profile(ctx context.Context, req *profilesv1.ProfileRequest)
 
 	return &profilesv1.ProfileResponse{
 		Profile: profile.ToGRPC(),
+	}, nil
+}
+
+func (s *serverAPI) ToggleLikeTrack(ctx context.Context, req *profilesv1.ToggleLikeTrackRequest) (*profilesv1.ToggleLikeTrackResponse, error) {
+	s.log.Info("[ToggleLikeTrack] grpc started")
+
+	profileId, err := primitive.ObjectIDFromHex(req.ProfileId)
+	if err != nil {
+		s.log.Error("[ToggleLikeTrack] grpc error: " + err.Error())
+		return nil, errors.New("[ToggleLikeTrack] grpc error: " + err.Error())
+	}
+
+	trackId, err := primitive.ObjectIDFromHex(req.TrackId)
+	if err != nil {
+		s.log.Error("[ToggleLikeTrack] grpc error: " + err.Error())
+		return nil, errors.New("[ToggleLikeTrack] grpc error: " + err.Error())
+	}
+
+	liked, err := s.profiles.ToggleLikeTrack(ctx, profileId, trackId)
+	if err != nil {
+		s.log.Error("[ToggleLikeTrack] grpc error: " + err.Error())
+		return nil, errors.New("[ToggleLikeTrack] grpc error: " + err.Error())
+	}
+
+	return &profilesv1.ToggleLikeTrackResponse{
+		NowLiked: liked,
+	}, nil
+}
+
+func (s *serverAPI) ToggleLikeAlbum(ctx context.Context, req *profilesv1.ToggleLikeAlbumRequest) (*profilesv1.ToggleLikeAlbumResponse, error) {
+	s.log.Info("[ToggleLikeAlbum] grpc started")
+
+	profileId, err := primitive.ObjectIDFromHex(req.ProfileId)
+	if err != nil {
+		s.log.Error("[ToggleLikeTrack] grpc error: " + err.Error())
+		return nil, errors.New("[ToggleLikeTrack] grpc error: " + err.Error())
+	}
+
+	albumId, err := primitive.ObjectIDFromHex(req.AlbumId)
+	if err != nil {
+		s.log.Error("[ToggleLikeTrack] grpc error: " + err.Error())
+		return nil, errors.New("[ToggleLikeTrack] grpc error: " + err.Error())
+	}
+
+	liked, err := s.profiles.ToggleLikeAlbum(ctx, profileId, albumId)
+	if err != nil {
+		s.log.Error("[ToggleLikeAlbum] grpc error: " + err.Error())
+		return nil, errors.New("[ToggleLikeAlbum] grpc error: " + err.Error())
+	}
+
+	return &profilesv1.ToggleLikeAlbumResponse{
+		NowLiked: liked,
+	}, nil
+}
+
+func (s *serverAPI) ToggleLikeArtist(ctx context.Context, req *profilesv1.ToggleLikeArtistRequest) (*profilesv1.ToggleLikeArtistResponse, error) {
+	s.log.Info("[ToggleLikeArtist] grpc started")
+
+	profileId, err := primitive.ObjectIDFromHex(req.ProfileId)
+	if err != nil {
+		s.log.Error("[ToggleLikeTrack] grpc error: " + err.Error())
+		return nil, errors.New("[ToggleLikeTrack] grpc error: " + err.Error())
+	}
+
+	artistId, err := primitive.ObjectIDFromHex(req.ArtistId)
+	if err != nil {
+		s.log.Error("[ToggleLikeTrack] grpc error: " + err.Error())
+		return nil, errors.New("[ToggleLikeTrack] grpc error: " + err.Error())
+	}
+
+	liked, err := s.profiles.ToggleLikeArtist(ctx, profileId, artistId)
+	if err != nil {
+		s.log.Error("[ToggleLikeArtist] grpc error: " + err.Error())
+		return nil, errors.New("[ToggleLikeArtist] grpc error: " + err.Error())
+	}
+
+	return &profilesv1.ToggleLikeArtistResponse{
+		NowLiked: liked,
 	}, nil
 }

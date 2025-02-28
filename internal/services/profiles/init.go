@@ -34,6 +34,12 @@ type TracksProvider interface {
 type Profiles interface {
 	CreateProfile(ctx context.Context, userId uint32, name, avatar, bio string) (id primitive.ObjectID, err error)
 	Profile(ctx context.Context, id primitive.ObjectID) (profile models.ProfilePreliminary, err error)
+	IsTrackLiked(ctx context.Context, profileId primitive.ObjectID, trackId primitive.ObjectID) (bool, error)
+	SetTrackLiked(ctx context.Context, profileId primitive.ObjectID, trackId primitive.ObjectID, liked bool) error
+	IsAlbumLiked(ctx context.Context, profileId primitive.ObjectID, albumId primitive.ObjectID) (bool, error)
+	SetAlbumLiked(ctx context.Context, profileId primitive.ObjectID, albumId primitive.ObjectID, liked bool) error
+	IsArtistLiked(ctx context.Context, profileId primitive.ObjectID, artistId primitive.ObjectID) (bool, error)
+	SetArtistLiked(ctx context.Context, profileId primitive.ObjectID, artistId primitive.ObjectID, liked bool) error
 }
 
 func New(log *slog.Logger, profiles Profiles, artistsProvider ArtistsProvider, albumsProvider AlbumsProvider, tracksProvider TracksProvider) *ProfilesService {

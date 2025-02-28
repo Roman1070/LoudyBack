@@ -7,6 +7,36 @@ option go_package = "loudy.profiles.v1;profilesv1";
 service Profiles{
     rpc CreateProfile(CreateProfileRequest) returns (CreateProfileResponse);
     rpc Profile(ProfileRequest) returns (ProfileResponse);
+    rpc ToggleLikeTrack(ToggleLikeTrackRequest) returns (ToggleLikeTrackResponse);
+    rpc ToggleLikeAlbum(ToggleLikeAlbumRequest) returns (ToggleLikeAlbumResponse);
+    rpc ToggleLikeArtist(ToggleLikeArtistRequest) returns (ToggleLikeArtistResponse);
+}
+
+message ToggleLikeArtistRequest{
+    string profile_id = 1;
+    string artist_id = 2;
+}
+
+message ToggleLikeArtistResponse{
+    bool now_liked = 1;
+}
+
+message ToggleLikeTrackRequest{
+    string profile_id = 1;
+    string track_id = 2;
+}
+
+message ToggleLikeTrackResponse{
+    bool now_liked=1;
+}
+
+message ToggleLikeAlbumRequest{
+    string profile_id = 1;
+    string album_id = 2;
+}
+
+message ToggleLikeAlbumResponse{
+    bool now_liked=1;
 }
 
 message CreateProfileRequest {
