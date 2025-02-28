@@ -25,7 +25,7 @@ type AlbumsProvider interface {
 }
 
 type Tracks interface {
-	CreateTrack(ctx context.Context, name string, albumId primitive.ObjectID, artistsIds []primitive.ObjectID, duration uint16) (primitive.ObjectID, error)
+	CreateTrack(ctx context.Context, name, filename string, albumId primitive.ObjectID, artistsIds []primitive.ObjectID, duration uint16) (primitive.ObjectID, error)
 	Track(ctx context.Context, id primitive.ObjectID) (models.TrackPreliminary, error)
 	Tracks(ctx context.Context, ids []primitive.ObjectID) ([]models.TrackPreliminary, error)
 }

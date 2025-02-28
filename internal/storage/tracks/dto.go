@@ -9,6 +9,7 @@ import (
 type dtoTrack struct {
 	ID         primitive.ObjectID   `bson:"_id"`
 	Name       string               `bson:"name"`
+	Filename   string               `bson:"filename"`
 	AlbumId    primitive.ObjectID   `bson:"album_id"`
 	ArtistsIds []primitive.ObjectID `bson:"artists_ids"`
 	Duration   uint16               `bson:"duration"`
@@ -17,6 +18,7 @@ type dtoTrack struct {
 type dtoTrackLight struct {
 	ID       primitive.ObjectID `bson:"_id"`
 	Name     string             `bson:"name"`
+	Filename string             `bson:"filename"`
 	AlbumId  primitive.ObjectID `bson:"album_id"`
 	Duration uint16             `bson:"duration"`
 }
@@ -28,6 +30,7 @@ func toLightModels(tracks []dtoTrackLight) []models.TrackLight {
 		result[i] = models.TrackLight{
 			ID:       track.ID,
 			Name:     track.Name,
+			Filename: track.Filename,
 			Duration: track.Duration,
 		}
 	}

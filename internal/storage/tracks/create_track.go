@@ -7,12 +7,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (s *TracksStorage) CreateTrack(ctx context.Context, name string, albumId primitive.ObjectID, artistsIds []primitive.ObjectID, duration uint16) (primitive.ObjectID, error) {
+func (s *TracksStorage) CreateTrack(ctx context.Context, name, filename string, albumId primitive.ObjectID, artistsIds []primitive.ObjectID, duration uint16) (primitive.ObjectID, error) {
 	s.log.Info("[CreateTrack] storage started")
 
 	track := dtoTrack{
 		ID:         primitive.NewObjectID(),
 		Name:       name,
+		Filename:   filename,
 		AlbumId:    albumId,
 		ArtistsIds: artistsIds,
 		Duration:   duration,

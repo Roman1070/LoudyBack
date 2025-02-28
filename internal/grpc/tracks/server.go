@@ -13,7 +13,7 @@ import (
 )
 
 type Tracks interface {
-	CreateTrack(ctx context.Context, name string, albumId primitive.ObjectID, artistsIds []primitive.ObjectID, duration uint16) (primitive.ObjectID, error)
+	CreateTrack(ctx context.Context, name, filename string, albumId primitive.ObjectID, artistsIds []primitive.ObjectID, duration uint16) (primitive.ObjectID, error)
 	Track(ctx context.Context, id primitive.ObjectID) (models.Track, error)
 	Tracks(ctx context.Context, ids []primitive.ObjectID) ([]models.Track, error)
 }
@@ -43,7 +43,7 @@ func (s *serverAPI) CreateTrack(ctx context.Context, req *tracksv1.CreateTrackRe
 		return nil, errors.New("[CreateTrack] grpc error: " + err.Error())
 	}
 
-	resp, err := s.tracks.CreateTrack(ctx, req.Name, albumId, artistsIds, uint16(req.Duration))
+	resp, err := s.tracks.CreateTrack(ctx, req.Name, req.Filename, albumId, artistsIds, uint16(req.Duration))
 	if err != nil {
 		s.log.Error("[CreateTrack] grpc error: " + err.Error())
 		return nil, errors.New("[CreateTrack] grpc error: " + err.Error())
