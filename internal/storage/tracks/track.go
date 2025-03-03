@@ -32,6 +32,7 @@ func (s *TracksStorage) Track(ctx context.Context, id primitive.ObjectID) (model
 	return models.TrackPreliminary{
 		ID:         track.ID,
 		Name:       track.Name,
+		Filename:   track.Filename,
 		AlbumID:    track.AlbumId,
 		ArtistsIds: track.ArtistsIds,
 		Duration:   track.Duration,

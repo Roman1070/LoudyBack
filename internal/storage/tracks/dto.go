@@ -37,3 +37,20 @@ func toLightModels(tracks []dtoTrackLight) []models.TrackLight {
 
 	return result
 }
+
+func toCommonModels(tracks []dtoTrack) []models.TrackPreliminary {
+	result := make([]models.TrackPreliminary, len(tracks))
+
+	for i, track := range tracks {
+		result[i] = models.TrackPreliminary{
+			ID:         track.ID,
+			Name:       track.Name,
+			Filename:   track.Filename,
+			Duration:   track.Duration,
+			ArtistsIds: track.ArtistsIds,
+			AlbumID:    track.AlbumId,
+		}
+	}
+
+	return result
+}

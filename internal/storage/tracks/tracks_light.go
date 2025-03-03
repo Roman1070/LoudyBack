@@ -32,13 +32,13 @@ func (s *TracksStorage) TracksLight(ctx context.Context, ids []primitive.ObjectI
 		slog.Error("[TracksLight] storage error: " + err.Error())
 		return nil, fmt.Errorf("%s", "[TracksLight] storage error: "+err.Error())
 	}
-	s.log.Info("[Artists] cursor recieved")
+	s.log.Info("[TracksLight] cursor recieved")
 
 	var results []dtoTrackLight
 	err = cursor.All(ctx, &results)
 	if err != nil {
-		slog.Error("[Artists] storage error: " + err.Error())
-		return nil, fmt.Errorf("%s", "[Artists] storage error: "+err.Error())
+		slog.Error("[TracksLight] storage error: " + err.Error())
+		return nil, fmt.Errorf("%s", "[TracksLight] storage error: "+err.Error())
 	}
 
 	return toLightModels(results), nil
