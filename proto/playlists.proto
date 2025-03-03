@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package playlists;
+
+option go_package = "loudy.playlists.v1;playlistsv1";
+
+service Playlists{
+    rpc PlaylistLight(PlaylistLightRequest) returns (PlaylistLightResponse);
+    rpc Playlist(PlaylistRequest) returns (PlaylistResponse);
+}
+
+message PlaylistLightRequest{
+    string id = 1;
+}
+
+message PlaylistLightResponse{
+    PlaylistLight data = 1;
+}
+
+message PlaylistLight{
+    string id = 1;
+    string name = 2;
+    string cover = 3;
+}
+
+message PlaylistRequest{
+    string id = 1;
+}
+
+message PlaylistResponse{
+    PlaylistData data = 1;
+}
+
+message PlaylistData{
+    string id = 1;
+    string name = 2;
+    string creator_id = 3;
+    string creator_name = 4;
+    string cover = 5;
+    repeated TrackData tracks = 6;
+}
+
+message TrackData{
+    string id = 1;
+    string name = 2;
+    string filename = 3;
+    string cover = 4;
+    string album_id = 5;
+    repeated ArtistLight artists = 6;
+    uint32 duration = 7;
+}
+
+message ArtistLight{
+    string id = 1;
+    string name = 2;
+}

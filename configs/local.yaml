@@ -17,6 +17,9 @@ grpc:
   tracks:
     port: 44004
     timeout: 10h
+  playlists:
+    port: 44005
+    timeout: 10h
 clients:
   auth:
     timeout: "4s"
@@ -35,6 +38,10 @@ clients:
     retriesCount: 5
     insecure: true
   tracks:
+    timeout: "4s"
+    retriesCount: 5
+    insecure: true
+  playlists:
     timeout: "4s"
     retriesCount: 5
     insecure: true

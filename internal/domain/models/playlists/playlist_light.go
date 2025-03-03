@@ -1,8 +1,6 @@
 package models
 
 import (
-	models "loudy-back/internal/domain/models/tracks"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -11,5 +9,5 @@ type PlaylistLight struct {
 	Name        string
 	CreatorID   primitive.ObjectID
 	CreatorName string
-	Tracks      []models.TrackLight
+	Cover       string
 }
